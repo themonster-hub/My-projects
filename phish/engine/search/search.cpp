@@ -149,6 +149,8 @@ static int score_move(const board::Position& pos, movegen::Move m, movegen::Move
 static int negamax(board::Position& pos, int depth, int alpha, int beta, TranspositionTable& tt, std::atomic<bool>& stop, int ply, movegen::Move prevMove, Piece prevMovedPiece, Square prevTo, int parentStaticEval) {
     if (stop.load(std::memory_order_relaxed)) return alpha;
 
+    ++g_nodes;
+
     const bool pvNode = (alpha + 1 < beta);
 
     // Stand pat / static eval

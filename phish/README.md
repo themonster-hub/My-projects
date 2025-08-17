@@ -10,7 +10,7 @@ Status: Experimental. Interfaces and internals will change. Strength is not tune
 - Legal move generation and FEN parsing
 - Zobrist hashing and exact make/unmake (incl. EP, castling, promotion)
 - UCI protocol: position/go/perft/setoption, async search with proper stop handling and periodic info lines
-- Search skeleton: iterative deepening, PVS, TT, null-move pruning, killers/history heuristics, basic capture-only quiescence
+- Search skeleton: iterative deepening, PVS, TT, null-move pruning, killers/history heuristics, basic capture-only quiescence, LMR/LMP/razoring/static-prune, MVV-LVA and countermoves
 - Perft tool and basic test list (startpos depths 1–3)
 
 ## Requirements
@@ -20,7 +20,7 @@ Status: Experimental. Interfaces and internals will change. Strength is not tune
 
 Optional: LTO/IPO enabled by default (PHISH_ENABLE_LTO=ON). Disable with -DPHISH_ENABLE_LTO=OFF if toolchain/linker has issues.
 
-## Build
+## Build (Desktop)
 ```
 cmake -S /workspace/phish -B /workspace/phish/build -DCMAKE_BUILD_TYPE=Release
 cmake --build /workspace/phish/build -j
@@ -69,14 +69,65 @@ Edit `tests/perft/perft_positions.txt` to add more FENs and depths:
 <fen or startpos>;<depth>;<expected_nodes>
 ```
 
-## Android / DroidFish
-- Build a position-independent Release binary for ARM64:
+## Mobile (Android) — How to install and run
+There are two common ways to use a UCI engine on Android. Choose 1 (recommended) or 2.
+
+1) Use DroidFish (or Chess for Android) and copy the prebuilt binary
+- Install apps:
+  - DroidFish from Google Play
+  - Alternatively: Chess for Android (also supports UCI engines)
+- Get a Phish ARM64 binary:
+  - If you have a desktop: build for Android (arm64) and copy to phone (see "Build for Android" below).
+  - Or use Termux on Android to build directly on device (see option 2).
+- In DroidFish: Menu → Manage Chess Engines → New UCI engine → Select the `phish` binary you copied to phone storage. You may need to allow execute permission.
+- Start a game; pick Phish as engine. Phish prints periodic UCI `info` lines and responds to `stop`.
+
+2) Build on phone using Termux (no PC required)
+- Install apps:
+  - Termux from F-Droid
+  - Optional GUIs: DroidFish or Chess for Android
+- In Termux, install toolchain:
 ```
-cmake -S /workspace/phish -B /workspace/phish/build-android -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DPHISH_ENABLE_LTO=OFF
-cmake --build /workspace/phish/build-android -j
+pkg update
+pkg install git cmake clang
 ```
-- Alternatively, use Android NDK toolchain (aarch64): set `CMAKE_TOOLCHAIN_FILE` to the NDK toolchain and `-DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-21`.
-- Copy the resulting `phish` binary into DroidFish's UCI engine folder on your device. Phish prints periodic `info` lines and supports `stop`, compatible with DroidFish.
+- Clone the project:
+```
+git clone https://github.com/themonster-hub/My-projects.git
+cd My-projects/phish
+```
+- Build (Release):
+```
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DPHISH_ENABLE_LTO=OFF
+cmake --build build -j$(nproc)
+```
+- The binary: `./build/phish`
+- Option A: Run in Termux directly and drive via UCI.
+- Option B: Copy `build/phish` into a folder accessible to DroidFish/Chess for Android and add it as a UCI engine as in option 1.
+
+### Build for Android (with Android NDK)
+If you prefer cross-compiling from PC for Android (arm64):
+```
+cmake -S . -B build-android \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_TOOLCHAIN_FILE=$NDK/build/cmake/android.toolchain.cmake \
+  -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-21 \
+  -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DPHISH_ENABLE_LTO=OFF
+cmake --build build-android -j
+```
+Copy `build-android/phish` to your phone.
+
+Notes:
+- Threads option is present but multi-threaded search is not implemented yet.
+- NEON/NNUE acceleration is not implemented yet; future work.
+- If the binary does not run, ensure it has execute permission and matches your device architecture (arm64-v8a).
+
+## Known issues and notes
+- PV in UCI `info` is currently minimal (root move only). Full PV extraction is planned.
+- SMP not implemented; `Threads` is a placeholder.
+- Syzygy/NNUE options are placeholders (not functional yet).
+- We print `bestmove` once per search. When `stop` is issued, we print a final best move computed so far.
+- If you see extremely fast `depth 1` info only: the GUI might be calling `go` with very short time limits; try `go depth N` to verify deeper search.
 
 ## Project layout
 ```
@@ -85,7 +136,7 @@ phish/
  │   ├─ bitboard/      # attack tables, sliding attacks
  │   ├─ board/         # Position, make/unmake, FEN
  │   ├─ movegen/       # moves + encoding
- │   ├─ search/        # PVS/TT/null-move (experimental)
+ │   ├─ search/        # PVS/TT/null-move/etc.
  │   ├─ uci/           # UCI loop
  │   └─ util/          # config, types, zobrist
  └─ tests/
@@ -94,7 +145,7 @@ phish/
 
 ## Roadmap (high level)
 - Correctness: expand perft suite; pins/check evasions edge cases; fuzzing
-- Strength: SEE, LMR/LMP, futility/razoring/IID, killer/history/countermove heuristics
+- Strength: SEE, more robust LMR/LMP, futility/razoring/IID tuning, countermove/CMH refinement
 - NNUE: HalfKP/KxP features, incremental updates, SIMD inference (AVX2/NEON)
 - Time management and pondering
 - SMP (Lazy SMP), lock-free clustered TT

@@ -183,7 +183,10 @@ void start_search(SearchController& ctrl, PositionState& st, search::Transpositi
             if (sr.bestMove != 0) ctrl.lastBest = sr.bestMove;
             ctrl.lastNodes = sr.nodes;
         }
-        std::cout << "bestmove " << move_to_uci(sr.bestMove) << '\n' << std::flush;
+        // Only print bestmove if we were not externally stopped
+        if (!ctrl.stop.load(std::memory_order_relaxed)) {
+            std::cout << "bestmove " << move_to_uci(sr.bestMove) << '\n' << std::flush;
+        }
         ctrl.thinking.store(false);
     });
     ctrl.thinking.store(true);

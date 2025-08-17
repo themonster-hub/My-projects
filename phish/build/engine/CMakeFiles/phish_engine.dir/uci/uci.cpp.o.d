@@ -292,10 +292,20 @@ engine/CMakeFiles/phish_engine.dir/uci/uci.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/this_thread_sleep.h \
   /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/semaphore.h \
   /usr/include/x86_64-linux-gnu/bits/semaphore.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/mutex \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/unique_lock.h \
   /workspace/phish/engine/../engine/util/config.h \
   /workspace/phish/engine/../engine/bitboard/bitboard.h \
   /workspace/phish/engine/../engine/util/types.h \
   /workspace/phish/engine/../engine/board/position.h \
   /workspace/phish/engine/../engine/movegen/move.h \
   /workspace/phish/engine/../engine/util/zobrist.h \
-  /workspace/phish/engine/../engine/search/search.h
+  /workspace/phish/engine/../engine/search/search.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/functional \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/std_function.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/unordered_map \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/unordered_map.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/hashtable.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/hashtable_policy.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/node_handle.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/erase_if.h

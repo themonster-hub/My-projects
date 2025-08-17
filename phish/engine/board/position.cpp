@@ -45,6 +45,7 @@ Position::Position() {
     std::fill(std::begin(pieceOn), std::end(pieceOn), NO_PIECE);
     std::fill(std::begin(bbByPiece), std::end(bbByPiece), 0ULL);
     std::fill(std::begin(occByColor), std::end(occByColor), 0ULL);
+    hash = 0ULL;
 }
 
 bool Position::set_startpos() {
@@ -99,6 +100,16 @@ bool Position::set_fen(const std::string& fen) {
     halfmove = half;
     fullmove = full;
 
+    // Build hash
+    hash = 0ULL;
+    for (int s = 0; s < 64; ++s) {
+        Piece pc = static_cast<Piece>(pieceOn[s]);
+        if (pc != NO_PIECE) hash ^= zobrist::PIECE_SQUARE[pc][s];
+    }
+    hash ^= zobrist::CASTLING[castling & 0xF];
+    if (ep != SQ_NONE) hash ^= zobrist::EP_FILE[file_of(ep)];
+    if (stm == BLACK) hash ^= zobrist::SIDE_TO_MOVE;
+
     return true;
 }
 
@@ -107,6 +118,7 @@ void Position::put_piece(Piece pc, Square s) {
     occByColor[piece_color(pc)] |= Bit(s);
     occByColor[2] |= Bit(s);
     pieceOn[s] = pc;
+    hash ^= zobrist::PIECE_SQUARE[pc][s];
 }
 
 void Position::remove_piece(Piece pc, Square s) {
@@ -114,6 +126,7 @@ void Position::remove_piece(Piece pc, Square s) {
     occByColor[piece_color(pc)] &= ~Bit(s);
     occByColor[2] &= ~Bit(s);
     pieceOn[s] = NO_PIECE;
+    hash ^= zobrist::PIECE_SQUARE[pc][s];
 }
 
 void Position::move_piece(Piece pc, Square from, Square to) {
@@ -123,6 +136,8 @@ void Position::move_piece(Piece pc, Square from, Square to) {
     occByColor[2] ^= Bit(from) | Bit(to);
     pieceOn[from] = NO_PIECE;
     pieceOn[to] = pc;
+    hash ^= zobrist::PIECE_SQUARE[pc][from];
+    hash ^= zobrist::PIECE_SQUARE[pc][to];
 }
 
 Square Position::king_square(Color c) const {
@@ -323,7 +338,6 @@ void Position::generate_legal(movegen::MoveList& list) const {
         Position copy = *this;
         if (copy.make_move(m, st)) {
             list.add(m);
-            copy.unmake_move(m, st); // not needed for copy but keep symmetry
         }
     }
 }
@@ -332,6 +346,14 @@ bool Position::make_move(movegen::Move m, StateInfo& st) {
     st.castlingRights = castling;
     st.epSquare = ep;
     st.halfmoveClock = halfmove;
+    st.hash = hash;
+    st.captured = NO_PIECE;
+
+    // Side to move out of hash
+    hash ^= zobrist::SIDE_TO_MOVE;
+
+    // Remove ep from hash
+    if (ep != SQ_NONE) hash ^= zobrist::EP_FILE[file_of(ep)];
 
     Square from = movegen::from_sq(m);
     Square to = movegen::to_sq(m);
@@ -340,11 +362,8 @@ bool Position::make_move(movegen::Move m, StateInfo& st) {
 
     // Update clocks
     ++halfmove;
-    if (piece_type(pc) == PAWN || (occByColor[opposite(stm)] & Bit(to))) halfmove = 0;
+    if (piece_type(pc) == PAWN) halfmove = 0;
     if (stm == BLACK) ++fullmove;
-
-    // Clear en-passant
-    ep = SQ_NONE;
 
     // Captures (incl. EP)
     if (movegen::is_enpassant(m)) {
@@ -353,9 +372,13 @@ bool Position::make_move(movegen::Move m, StateInfo& st) {
         Piece capPc = static_cast<Piece>(pieceOn[capSq]);
         if (piece_type(pc) != PAWN || capPc == NO_PIECE) return false;
         remove_piece(capPc, capSq);
+        st.captured = capPc;
+        halfmove = 0;
     } else if (occByColor[opposite(stm)] & Bit(to)) {
         Piece capPc = static_cast<Piece>(pieceOn[to]);
         remove_piece(capPc, to);
+        st.captured = capPc;
+        halfmove = 0;
     }
 
     // Special: castling rook move
@@ -379,6 +402,9 @@ bool Position::make_move(movegen::Move m, StateInfo& st) {
         }
     }
 
+    // Clear en-passant
+    ep = SQ_NONE;
+
     // Move piece
     move_piece(pc, from, to);
 
@@ -395,7 +421,7 @@ bool Position::make_move(movegen::Move m, StateInfo& st) {
         ep = make_square(file_of(from), midRank);
     }
 
-    // Update castling rights crudely if king or rooks moved/captured
+    // Update castling rights if moved through relevant squares (hash updates via castling table)
     auto clear_castle = [&](Square s) {
         if (s == SQ_E1) castling &= ~(1 | 2);
         if (s == SQ_H1) castling &= ~1;
@@ -404,12 +430,19 @@ bool Position::make_move(movegen::Move m, StateInfo& st) {
         if (s == SQ_H8) castling &= ~4;
         if (s == SQ_A8) castling &= ~8;
     };
+    int oldCastling = st.castlingRights;
     clear_castle(from);
     clear_castle(to);
+    if ((oldCastling & 0xF) != (castling & 0xF)) {
+        hash ^= zobrist::CASTLING[oldCastling & 0xF];
+        hash ^= zobrist::CASTLING[castling & 0xF];
+    }
 
-    // Legality: king not in check
+    // EP hash
+    if (ep != SQ_NONE) hash ^= zobrist::EP_FILE[file_of(ep)];
+
+    // Legality: own king not in check
     if (is_in_check(stm)) {
-        // undo
         unmake_move(m, st);
         return false;
     }
@@ -420,12 +453,48 @@ bool Position::make_move(movegen::Move m, StateInfo& st) {
 }
 
 void Position::unmake_move(movegen::Move m, const StateInfo& st) {
-    // Restore from saved state by recomputing from scratch is complex; we instead undo exactly
-    // This implementation assumes it is called only after make_move that succeeded and without external board changes.
-    // For simplicity in this MVP, we reset to prior snapshot by rebuilding from a copied Position in generate_legal.
-    // In search we will implement exact undo with a stack. Here it's unused.
-    (void)m;
-    (void)st;
+    // Restore base state
+    stm = opposite(stm);
+    castling = st.castlingRights;
+    ep = st.epSquare;
+    halfmove = st.halfmoveClock;
+    hash = st.hash;
+
+    Square from = movegen::from_sq(m);
+    Square to = movegen::to_sq(m);
+
+    Piece moved = static_cast<Piece>(pieceOn[to]);
+
+    // Undo promotion
+    if (movegen::is_promotion(m)) {
+        // moved piece is promoted, convert back to pawn
+        remove_piece(moved, to);
+        moved = make_piece(stm, PAWN);
+        put_piece(moved, to);
+    }
+
+    // Undo castling rook move
+    if (movegen::is_kingside_castle(m)) {
+        if (stm == WHITE) move_piece(W_ROOK, SQ_F1, SQ_H1);
+        else move_piece(B_ROOK, SQ_F8, SQ_H8);
+    } else if (movegen::is_queenside_castle(m)) {
+        if (stm == WHITE) move_piece(W_ROOK, SQ_D1, SQ_A1);
+        else move_piece(B_ROOK, SQ_D8, SQ_A8);
+    }
+
+    // Move piece back
+    move_piece(moved, to, from);
+
+    // Restore captured
+    if (st.captured != NO_PIECE) {
+        if (movegen::is_enpassant(m)) {
+            int dir = (stm == WHITE) ? -1 : 1;
+            Square capSq = make_square(file_of(to), rank_of(to) + dir);
+            put_piece(st.captured, capSq);
+        } else {
+            put_piece(st.captured, to);
+        }
+    }
 }
 
 bool Position::play_uci_move(const std::string& uci) {
@@ -440,7 +509,6 @@ bool Position::play_uci_move(const std::string& uci) {
     generate_legal(legal);
     for (auto m : legal.moves) {
         if (movegen::from_sq(m) == from && movegen::to_sq(m) == to) {
-            // Promotion handling
             if (movegen::is_promotion(m)) {
                 if (uci.size() == 5) {
                     char pr = uci[4];
@@ -471,9 +539,9 @@ std::uint64_t Position::perft(int depth) {
     std::uint64_t nodes = 0;
     StateInfo st;
     for (auto m : list.moves) {
-        Position copy = *this;
-        if (copy.make_move(m, st)) {
-            nodes += copy.perft(depth - 1);
+        if (make_move(m, st)) {
+            nodes += perft(depth - 1);
+            unmake_move(m, st);
         }
     }
     return nodes;
@@ -486,11 +554,11 @@ std::uint64_t Position::perft_divide(int depth, std::vector<std::pair<movegen::M
     std::uint64_t nodes = 0;
     StateInfo st;
     for (auto m : list.moves) {
-        Position copy = *this;
-        if (copy.make_move(m, st)) {
-            std::uint64_t n = copy.perft(depth - 1);
+        if (make_move(m, st)) {
+            std::uint64_t n = perft(depth - 1);
             out.emplace_back(m, n);
             nodes += n;
+            unmake_move(m, st);
         }
     }
     return nodes;

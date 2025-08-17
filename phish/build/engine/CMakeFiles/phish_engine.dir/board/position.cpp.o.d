@@ -162,6 +162,7 @@ engine/CMakeFiles/phish_engine.dir/board/position.cpp.o: \
   /workspace/phish/engine/../engine/util/types.h \
   /workspace/phish/engine/../engine/bitboard/bitboard.h \
   /workspace/phish/engine/../engine/movegen/move.h \
+  /workspace/phish/engine/../engine/util/zobrist.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/algorithm \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_algo.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/algorithmfwd.h \

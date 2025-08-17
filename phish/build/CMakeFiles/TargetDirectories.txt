@@ -12,3 +12,10 @@
 /workspace/phish/build/engine/CMakeFiles/install.dir
 /workspace/phish/build/engine/CMakeFiles/install/local.dir
 /workspace/phish/build/engine/CMakeFiles/install/strip.dir
+/workspace/phish/build/tests/CMakeFiles/phish_perft.dir
+/workspace/phish/build/tests/CMakeFiles/edit_cache.dir
+/workspace/phish/build/tests/CMakeFiles/rebuild_cache.dir
+/workspace/phish/build/tests/CMakeFiles/list_install_components.dir
+/workspace/phish/build/tests/CMakeFiles/install.dir
+/workspace/phish/build/tests/CMakeFiles/install/local.dir
+/workspace/phish/build/tests/CMakeFiles/install/strip.dir

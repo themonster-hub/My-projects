@@ -1,0 +1,4 @@
+/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
+/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
+/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
+/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir

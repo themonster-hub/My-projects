@@ -8,6 +8,7 @@
 #include "engine/util/types.h"
 #include "engine/bitboard/bitboard.h"
 #include "engine/movegen/move.h"
+#include "engine/util/zobrist.h"
 
 namespace phish::board {
 
@@ -15,6 +16,8 @@ struct StateInfo {
     int castlingRights = 0; // bits: 1=K,2=Q,4=k,8=q
     Square epSquare = SQ_NONE;
     int halfmoveClock = 0;
+    U64 hash = 0ULL;
+    Piece captured = NO_PIECE;
 };
 
 class Position {
@@ -25,6 +28,9 @@ public:
     bool set_startpos();
 
     Color side_to_move() const { return stm; }
+    int castling_rights() const { return castling; }
+    Square ep_square() const { return ep; }
+    U64 key() const { return hash; }
 
     // Make/unmake move. Returns false if move illegal.
     bool make_move(movegen::Move m, StateInfo& st);
@@ -51,6 +57,7 @@ private:
     Square ep = SQ_NONE;
     int halfmove = 0;
     int fullmove = 1;
+    U64 hash = 0ULL;
 
     // Helpers
     U64 occupancy() const { return occByColor[2]; }

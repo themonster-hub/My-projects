@@ -296,4 +296,6 @@ engine/CMakeFiles/phish_engine.dir/uci/uci.cpp.o: \
   /workspace/phish/engine/../engine/bitboard/bitboard.h \
   /workspace/phish/engine/../engine/util/types.h \
   /workspace/phish/engine/../engine/board/position.h \
-  /workspace/phish/engine/../engine/movegen/move.h
+  /workspace/phish/engine/../engine/movegen/move.h \
+  /workspace/phish/engine/../engine/util/zobrist.h \
+  /workspace/phish/engine/../engine/search/search.h

@@ -39,8 +39,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-xyJhJg"
-      binary: "/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-xyJhJg"
+      source: "/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-rLwLLm"
+      binary: "/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-rLwLLm"
     cmakeVariables:
       CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/usr/bin/clang-scan-deps-20"
       CMAKE_CXX_FLAGS: ""
@@ -51,13 +51,13 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-xyJhJg'
+        Change Dir: '/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-rLwLLm'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_f82ba/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_f82ba.dir/build.make CMakeFiles/cmTC_f82ba.dir/build
-        gmake[1]: Entering directory '/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-xyJhJg'
-        Building CXX object CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o
-        /usr/bin/c++   -v -MD -MT CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_03a35/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_03a35.dir/build.make CMakeFiles/cmTC_03a35.dir/build
+        gmake[1]: Entering directory '/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-rLwLLm'
+        Building CXX object CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o
+        /usr/bin/c++   -v -MD -MT CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp
         Ubuntu clang version 20.1.2 (0ubuntu1)
         Target: x86_64-pc-linux-gnu
         Thread model: posix
@@ -67,7 +67,7 @@ events:
         Candidate multilib: .;@m64
         Selected multilib: .;@m64
          (in-process)
-         "/usr/lib/llvm-20/bin/clang" -cc1 -triple x86_64-pc-linux-gnu -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -pic-is-pie -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -funwind-tables=2 -target-cpu x86-64 -tune-cpu generic -debugger-tuning=gdb -fdebug-compilation-dir=/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-xyJhJg -v -fcoverage-compilation-dir=/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-xyJhJg -resource-dir /usr/lib/llvm-20/lib/clang/20 -dependency-file CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14 -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14 -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/backward -internal-isystem /usr/lib/llvm-20/lib/clang/20/include -internal-isystem /usr/local/include -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../x86_64-linux-gnu/include -internal-externc-isystem /usr/include/x86_64-linux-gnu -internal-externc-isystem /include -internal-externc-isystem /usr/include -fdeprecated-macro -ferror-limit 19 -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -faddrsig -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp
+         "/usr/lib/llvm-20/bin/clang" -cc1 -triple x86_64-pc-linux-gnu -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -pic-is-pie -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -funwind-tables=2 -target-cpu x86-64 -tune-cpu generic -debugger-tuning=gdb -fdebug-compilation-dir=/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-rLwLLm -v -fcoverage-compilation-dir=/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-rLwLLm -resource-dir /usr/lib/llvm-20/lib/clang/20 -dependency-file CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14 -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14 -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/backward -internal-isystem /usr/lib/llvm-20/lib/clang/20/include -internal-isystem /usr/local/include -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../x86_64-linux-gnu/include -internal-externc-isystem /usr/include/x86_64-linux-gnu -internal-externc-isystem /include -internal-externc-isystem /usr/include -fdeprecated-macro -ferror-limit 19 -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -faddrsig -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp
         clang -cc1 version 20.1.2 based upon LLVM 20.1.2 default target x86_64-pc-linux-gnu
         ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/14/../../../../x86_64-linux-gnu/include"
         ignoring nonexistent directory "/include"
@@ -81,8 +81,8 @@ events:
          /usr/include/x86_64-linux-gnu
          /usr/include
         End of search list.
-        Linking CXX executable cmTC_f82ba
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f82ba.dir/link.txt --verbose=1
+        Linking CXX executable cmTC_03a35
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_03a35.dir/link.txt --verbose=1
         Ubuntu clang version 20.1.2 (0ubuntu1)
         Target: x86_64-pc-linux-gnu
         Thread model: posix
@@ -91,10 +91,10 @@ events:
         Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/14
         Candidate multilib: .;@m64
         Selected multilib: .;@m64
-         "/usr/bin/ld" -z relro --hash-style=gnu --build-id --eh-frame-hdr -m elf_x86_64 -pie -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_f82ba /lib/x86_64-linux-gnu/Scrt1.o /lib/x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/14 -L/usr/lib/gcc/x86_64-linux-gnu/14/../../../../lib64 -L/lib/x86_64-linux-gnu -L/lib/../lib64 -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib64 -L/lib -L/usr/lib -v CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/14/crtendS.o /lib/x86_64-linux-gnu/crtn.o
+         "/usr/bin/ld" -z relro --hash-style=gnu --build-id --eh-frame-hdr -m elf_x86_64 -pie -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_03a35 /lib/x86_64-linux-gnu/Scrt1.o /lib/x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/14 -L/usr/lib/gcc/x86_64-linux-gnu/14/../../../../lib64 -L/lib/x86_64-linux-gnu -L/lib/../lib64 -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib64 -L/lib -L/usr/lib -v CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/14/crtendS.o /lib/x86_64-linux-gnu/crtn.o
         GNU ld (GNU Binutils for Ubuntu) 2.44
-        /usr/bin/c++  -v -Wl,-v CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_f82ba
-        gmake[1]: Leaving directory '/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-xyJhJg'
+        /usr/bin/c++  -v -Wl,-v CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_03a35
+        gmake[1]: Leaving directory '/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-rLwLLm'
         
       exitCode: 0
   -
@@ -135,13 +135,13 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(\\.[a-z]+)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(\\.[a-z]+)?))("|,| |$)]
-        ignore line: [Change Dir: '/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-xyJhJg']
+        ignore line: [Change Dir: '/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-rLwLLm']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_f82ba/fast]
-        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_f82ba.dir/build.make CMakeFiles/cmTC_f82ba.dir/build]
-        ignore line: [gmake[1]: Entering directory '/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-xyJhJg']
-        ignore line: [Building CXX object CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o]
-        ignore line: [/usr/bin/c++   -v -MD -MT CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_03a35/fast]
+        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_03a35.dir/build.make CMakeFiles/cmTC_03a35.dir/build]
+        ignore line: [gmake[1]: Entering directory '/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-rLwLLm']
+        ignore line: [Building CXX object CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/usr/bin/c++   -v -MD -MT CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [Ubuntu clang version 20.1.2 (0ubuntu1)]
         ignore line: [Target: x86_64-pc-linux-gnu]
         ignore line: [Thread model: posix]
@@ -153,7 +153,7 @@ events:
         ignore line: [Selected multilib: .]
         ignore line: [@m64]
         ignore line: [ (in-process)]
-        ignore line: [ "/usr/lib/llvm-20/bin/clang" -cc1 -triple x86_64-pc-linux-gnu -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -pic-is-pie -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -funwind-tables=2 -target-cpu x86-64 -tune-cpu generic -debugger-tuning=gdb -fdebug-compilation-dir=/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-xyJhJg -v -fcoverage-compilation-dir=/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-xyJhJg -resource-dir /usr/lib/llvm-20/lib/clang/20 -dependency-file CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14 -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14 -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/backward -internal-isystem /usr/lib/llvm-20/lib/clang/20/include -internal-isystem /usr/local/include -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../x86_64-linux-gnu/include -internal-externc-isystem /usr/include/x86_64-linux-gnu -internal-externc-isystem /include -internal-externc-isystem /usr/include -fdeprecated-macro -ferror-limit 19 -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -faddrsig -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [ "/usr/lib/llvm-20/bin/clang" -cc1 -triple x86_64-pc-linux-gnu -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -pic-is-pie -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -funwind-tables=2 -target-cpu x86-64 -tune-cpu generic -debugger-tuning=gdb -fdebug-compilation-dir=/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-rLwLLm -v -fcoverage-compilation-dir=/workspace/phish/build/CMakeFiles/CMakeScratch/TryCompile-rLwLLm -resource-dir /usr/lib/llvm-20/lib/clang/20 -dependency-file CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14 -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14 -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/backward -internal-isystem /usr/lib/llvm-20/lib/clang/20/include -internal-isystem /usr/local/include -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/14/../../../../x86_64-linux-gnu/include -internal-externc-isystem /usr/include/x86_64-linux-gnu -internal-externc-isystem /include -internal-externc-isystem /usr/include -fdeprecated-macro -ferror-limit 19 -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -faddrsig -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [clang -cc1 version 20.1.2 based upon LLVM 20.1.2 default target x86_64-pc-linux-gnu]
         ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/14/../../../../x86_64-linux-gnu/include"]
         ignore line: [ignoring nonexistent directory "/include"]
@@ -167,8 +167,8 @@ events:
         ignore line: [ /usr/include/x86_64-linux-gnu]
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
-        ignore line: [Linking CXX executable cmTC_f82ba]
-        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f82ba.dir/link.txt --verbose=1]
+        ignore line: [Linking CXX executable cmTC_03a35]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_03a35.dir/link.txt --verbose=1]
         ignore line: [Ubuntu clang version 20.1.2 (0ubuntu1)]
         ignore line: [Target: x86_64-pc-linux-gnu]
         ignore line: [Thread model: posix]
@@ -179,7 +179,7 @@ events:
         ignore line: [@m64]
         ignore line: [Selected multilib: .]
         ignore line: [@m64]
-        link line: [ "/usr/bin/ld" -z relro --hash-style=gnu --build-id --eh-frame-hdr -m elf_x86_64 -pie -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_f82ba /lib/x86_64-linux-gnu/Scrt1.o /lib/x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/14 -L/usr/lib/gcc/x86_64-linux-gnu/14/../../../../lib64 -L/lib/x86_64-linux-gnu -L/lib/../lib64 -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib64 -L/lib -L/usr/lib -v CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/14/crtendS.o /lib/x86_64-linux-gnu/crtn.o]
+        link line: [ "/usr/bin/ld" -z relro --hash-style=gnu --build-id --eh-frame-hdr -m elf_x86_64 -pie -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_03a35 /lib/x86_64-linux-gnu/Scrt1.o /lib/x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/14 -L/usr/lib/gcc/x86_64-linux-gnu/14/../../../../lib64 -L/lib/x86_64-linux-gnu -L/lib/../lib64 -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib64 -L/lib -L/usr/lib -v CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/14/crtendS.o /lib/x86_64-linux-gnu/crtn.o]
           arg [/usr/bin/ld] ==> ignore
           arg [-zrelro] ==> ignore
           arg [--hash-style=gnu] ==> ignore
@@ -191,7 +191,7 @@ events:
           arg [-dynamic-linker] ==> ignore
           arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_f82ba] ==> ignore
+          arg [cmTC_03a35] ==> ignore
           arg [/lib/x86_64-linux-gnu/Scrt1.o] ==> obj [/lib/x86_64-linux-gnu/Scrt1.o]
           arg [/lib/x86_64-linux-gnu/crti.o] ==> obj [/lib/x86_64-linux-gnu/crti.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o]
@@ -204,7 +204,7 @@ events:
           arg [-L/lib] ==> dir [/lib]
           arg [-L/usr/lib] ==> dir [/usr/lib]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_f82ba.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [CMakeFiles/cmTC_03a35.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
           arg [-lstdc++] ==> lib [stdc++]
           arg [-lm] ==> lib [m]
           arg [-lgcc_s] ==> lib [gcc_s]
@@ -244,7 +244,7 @@ events:
     backtrace:
       - "/usr/share/cmake-3.31/Modules/CheckIPOSupported.cmake:138 (try_compile)"
       - "/usr/share/cmake-3.31/Modules/CheckIPOSupported.cmake:261 (_ipo_run_language_check)"
-      - "CMakeLists.txt:27 (check_ipo_supported)"
+      - "CMakeLists.txt:28 (check_ipo_supported)"
     directories:
       source: "/workspace/phish/build/CMakeFiles/_CMakeLTOTest-CXX/src"
       binary: "/workspace/phish/build/CMakeFiles/_CMakeLTOTest-CXX/bin"
@@ -300,7 +300,61 @@ events:
     backtrace:
       - "/usr/share/cmake-3.31/Modules/CheckIPOSupported.cmake:138 (try_compile)"
       - "/usr/share/cmake-3.31/Modules/CheckIPOSupported.cmake:261 (_ipo_run_language_check)"
-      - "CMakeLists.txt:27 (check_ipo_supported)"
+      - "tests/CMakeLists.txt:8 (check_ipo_supported)"
+    directories:
+      source: "/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/src"
+      binary: "/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin"
+    buildResult:
+      variable: "_IPO_LANGUAGE_CHECK_RESULT"
+      cached: true
+      stdout: |
+        Change Dir: '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile
+        gmake[1]: Entering directory '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        /usr/bin/cmake -S/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/src -B/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin --check-build-system CMakeFiles/Makefile.cmake 0
+        /usr/bin/cmake -E cmake_progress_start /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin//CMakeFiles/progress.marks
+        /usr/bin/gmake  -f CMakeFiles/Makefile2 all
+        gmake[2]: Entering directory '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        /usr/bin/gmake  -f CMakeFiles/foo.dir/build.make CMakeFiles/foo.dir/depend
+        gmake[3]: Entering directory '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        cd /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/src /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/src /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir/DependInfo.cmake
+        gmake[3]: Leaving directory '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        /usr/bin/gmake  -f CMakeFiles/foo.dir/build.make CMakeFiles/foo.dir/build
+        gmake[3]: Entering directory '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        [ 25%] Building CXX object CMakeFiles/foo.dir/foo.cpp.o
+        /usr/bin/c++   -flto=thin -MD -MT CMakeFiles/foo.dir/foo.cpp.o -MF CMakeFiles/foo.dir/foo.cpp.o.d -o CMakeFiles/foo.dir/foo.cpp.o -c /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/src/foo.cpp
+        [ 50%] Linking CXX static library libfoo.a
+        /usr/bin/cmake -P CMakeFiles/foo.dir/cmake_clean_target.cmake
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/foo.dir/link.txt --verbose=1
+        "/usr/bin/llvm-ar-20" qc libfoo.a CMakeFiles/foo.dir/foo.cpp.o
+        "/usr/bin/llvm-ranlib-20" libfoo.a
+        gmake[3]: Leaving directory '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        [ 50%] Built target foo
+        /usr/bin/gmake  -f CMakeFiles/boo.dir/build.make CMakeFiles/boo.dir/depend
+        gmake[3]: Entering directory '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        cd /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/src /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/src /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir/DependInfo.cmake
+        gmake[3]: Leaving directory '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        /usr/bin/gmake  -f CMakeFiles/boo.dir/build.make CMakeFiles/boo.dir/build
+        gmake[3]: Entering directory '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        [ 75%] Building CXX object CMakeFiles/boo.dir/main.cpp.o
+        /usr/bin/c++   -flto=thin -MD -MT CMakeFiles/boo.dir/main.cpp.o -MF CMakeFiles/boo.dir/main.cpp.o.d -o CMakeFiles/boo.dir/main.cpp.o -c /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/src/main.cpp
+        [100%] Linking CXX executable boo
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/boo.dir/link.txt --verbose=1
+        /usr/bin/c++ -flto=thin CMakeFiles/boo.dir/main.cpp.o -o boo  libfoo.a
+        gmake[3]: Leaving directory '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        [100%] Built target boo
+        gmake[2]: Leaving directory '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        /usr/bin/cmake -E cmake_progress_start /workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles 0
+        gmake[1]: Leaving directory '/workspace/phish/build/tests/CMakeFiles/_CMakeLTOTest-CXX/bin'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.31/Modules/CheckIPOSupported.cmake:138 (try_compile)"
+      - "/usr/share/cmake-3.31/Modules/CheckIPOSupported.cmake:261 (_ipo_run_language_check)"
+      - "CMakeLists.txt:28 (check_ipo_supported)"
     directories:
       source: "/workspace/phish/build/CMakeFiles/_CMakeLTOTest-CXX/src"
       binary: "/workspace/phish/build/CMakeFiles/_CMakeLTOTest-CXX/bin"

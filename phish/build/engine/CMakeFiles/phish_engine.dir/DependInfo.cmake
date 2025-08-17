@@ -10,8 +10,10 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/phish/engine/bitboard/bitboard.cpp" "engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o" "gcc" "engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o.d"
   "/workspace/phish/engine/board/position.cpp" "engine/CMakeFiles/phish_engine.dir/board/position.cpp.o" "gcc" "engine/CMakeFiles/phish_engine.dir/board/position.cpp.o.d"
+  "/workspace/phish/engine/search/search.cpp" "engine/CMakeFiles/phish_engine.dir/search/search.cpp.o" "gcc" "engine/CMakeFiles/phish_engine.dir/search/search.cpp.o.d"
   "/workspace/phish/engine/uci/uci.cpp" "engine/CMakeFiles/phish_engine.dir/uci/uci.cpp.o" "gcc" "engine/CMakeFiles/phish_engine.dir/uci/uci.cpp.o.d"
   "/workspace/phish/engine/util/config.cpp" "engine/CMakeFiles/phish_engine.dir/util/config.cpp.o" "gcc" "engine/CMakeFiles/phish_engine.dir/util/config.cpp.o.d"
+  "/workspace/phish/engine/util/zobrist.cpp" "engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.o" "gcc" "engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

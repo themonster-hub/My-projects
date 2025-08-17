@@ -39,6 +39,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.31.6/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.31.6/CMakeSystem.cmake"
   "/workspace/phish/engine/CMakeLists.txt"
+  "/workspace/phish/tests/CMakeLists.txt"
   )
 
 # The corresponding makefile is:
@@ -54,10 +55,15 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/_CMakeLTOTest-CXX/src/main.cpp"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "engine/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "tests/CMakeFiles/_CMakeLTOTest-CXX/src/CMakeLists.txt"
+  "tests/CMakeFiles/_CMakeLTOTest-CXX/src/foo.cpp"
+  "tests/CMakeFiles/_CMakeLTOTest-CXX/src/main.cpp"
+  "tests/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/phish.dir/DependInfo.cmake"
   "engine/CMakeFiles/phish_engine.dir/DependInfo.cmake"
+  "tests/CMakeFiles/phish_perft.dir/DependInfo.cmake"
   )

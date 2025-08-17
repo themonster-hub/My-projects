@@ -15,6 +15,7 @@ else()
 endif()
 
 add_subdirectory(engine)
+add_subdirectory(tests)
 
 add_executable(phish main.cpp)
 

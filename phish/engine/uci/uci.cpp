@@ -15,6 +15,8 @@
 #include "engine/bitboard/bitboard.h"
 #include "engine/board/position.h"
 #include "engine/movegen/move.h"
+#include "engine/util/zobrist.h"
+#include "engine/search/search.h"
 
 namespace phish::uci {
 
@@ -113,8 +115,42 @@ void handle_position(const std::vector<std::string>& tokens, PositionState& st) 
     }
 }
 
-void handle_go(const std::vector<std::string>& /*tokens*/, const PositionState& /*st*/) {
-    std::cout << "bestmove 0000" << '\n' << std::flush;
+std::string move_to_uci(movegen::Move m) {
+    char buf[8]{};
+    auto f = [](Square s) { return 'a' + file_of(s); };
+    auto r = [](Square s) { return '1' + rank_of(s); };
+    Square from = movegen::from_sq(m);
+    Square to = movegen::to_sq(m);
+    buf[0] = static_cast<char>(f(from));
+    buf[1] = static_cast<char>(r(from));
+    buf[2] = static_cast<char>(f(to));
+    buf[3] = static_cast<char>(r(to));
+    if (movegen::is_promotion(m)) {
+        char p = 'q';
+        switch (movegen::promotion_piece(m)) {
+            case KNIGHT: p = 'n'; break;
+            case BISHOP: p = 'b'; break;
+            case ROOK: p = 'r'; break;
+            case QUEEN: p = 'q'; break;
+            default: break;
+        }
+        buf[4] = p;
+        buf[5] = '\0';
+    } else {
+        buf[4] = '\0';
+    }
+    return std::string(buf);
+}
+
+void handle_go(const std::vector<std::string>& tokens, PositionState& st, search::TranspositionTable& tt) {
+    // Parse depth only for MVP
+    int depth = 1;
+    for (std::size_t i = 1; i + 1 < tokens.size(); ++i) {
+        if (tokens[i] == "depth") depth = std::atoi(tokens[i + 1].c_str());
+    }
+    search::Limits lim; lim.depth = depth;
+    auto res = search::think(st.pos, lim, tt);
+    std::cout << "bestmove " << move_to_uci(res.bestMove) << '\n' << std::flush;
 }
 
 void handle_perft(const std::vector<std::string>& tokens, PositionState& st) {
@@ -128,8 +164,10 @@ void handle_perft(const std::vector<std::string>& tokens, PositionState& st) {
 
 void run() {
     bitboard::init();
+    zobrist::init();
     PositionState state;
     state.pos.set_fen("startpos");
+    search::TranspositionTable tt(static_cast<std::size_t>(options().hashMb));
 
     std::string line;
     while (std::getline(std::cin, line)) {
@@ -147,12 +185,15 @@ void run() {
             std::cout << "readyok" << '\n' << std::flush;
         } else if (cmd == "setoption") {
             handle_setoption(line);
+            // Resize TT if hash changed
+            tt.resize(static_cast<std::size_t>(options().hashMb));
         } else if (cmd == "ucinewgame") {
             state.pos.set_fen("startpos");
+            tt.clear();
         } else if (cmd == "position") {
             handle_position(tokens, state);
         } else if (cmd == "go") {
-            handle_go(tokens, state);
+            handle_go(tokens, state, tt);
         } else if (cmd == "stop") {
             std::cout << "bestmove 0000" << '\n' << std::flush;
         } else if (cmd == "bench") {

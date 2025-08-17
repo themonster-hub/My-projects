@@ -223,6 +223,30 @@ board/position.cpp.s:
 	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/board/position.cpp.s
 .PHONY : board/position.cpp.s
 
+search/search.o: search/search.cpp.o
+.PHONY : search/search.o
+
+# target to build an object file
+search/search.cpp.o:
+	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/search/search.cpp.o
+.PHONY : search/search.cpp.o
+
+search/search.i: search/search.cpp.i
+.PHONY : search/search.i
+
+# target to preprocess a source file
+search/search.cpp.i:
+	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/search/search.cpp.i
+.PHONY : search/search.cpp.i
+
+search/search.s: search/search.cpp.s
+.PHONY : search/search.s
+
+# target to generate assembly for a file
+search/search.cpp.s:
+	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/search/search.cpp.s
+.PHONY : search/search.cpp.s
+
 uci/uci.o: uci/uci.cpp.o
 .PHONY : uci/uci.o
 
@@ -271,6 +295,30 @@ util/config.cpp.s:
 	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/util/config.cpp.s
 .PHONY : util/config.cpp.s
 
+util/zobrist.o: util/zobrist.cpp.o
+.PHONY : util/zobrist.o
+
+# target to build an object file
+util/zobrist.cpp.o:
+	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.o
+.PHONY : util/zobrist.cpp.o
+
+util/zobrist.i: util/zobrist.cpp.i
+.PHONY : util/zobrist.i
+
+# target to preprocess a source file
+util/zobrist.cpp.i:
+	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.i
+.PHONY : util/zobrist.cpp.i
+
+util/zobrist.s: util/zobrist.cpp.s
+.PHONY : util/zobrist.s
+
+# target to generate assembly for a file
+util/zobrist.cpp.s:
+	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.s
+.PHONY : util/zobrist.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -290,12 +338,18 @@ help:
 	@echo "... board/position.o"
 	@echo "... board/position.i"
 	@echo "... board/position.s"
+	@echo "... search/search.o"
+	@echo "... search/search.i"
+	@echo "... search/search.s"
 	@echo "... uci/uci.o"
 	@echo "... uci/uci.i"
 	@echo "... uci/uci.s"
 	@echo "... util/config.o"
 	@echo "... util/config.i"
 	@echo "... util/config.s"
+	@echo "... util/zobrist.o"
+	@echo "... util/zobrist.i"
+	@echo "... util/zobrist.s"
 .PHONY : help
 
 

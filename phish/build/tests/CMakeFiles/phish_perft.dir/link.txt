@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG -flto=thin -Xlinker --dependency-file=CMakeFiles/phish_perft.dir/link.d CMakeFiles/phish_perft.dir/perft/run_perft.cpp.o -o phish_perft  ../engine/libphish_engine.a

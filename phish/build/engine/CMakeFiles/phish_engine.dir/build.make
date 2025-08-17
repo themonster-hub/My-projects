@@ -100,10 +100,24 @@ engine/CMakeFiles/phish_engine.dir/util/config.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/phish_engine.dir/util/config.cpp.s"
 	cd /workspace/phish/build/engine && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/phish/engine/util/config.cpp -o CMakeFiles/phish_engine.dir/util/config.cpp.s
 
+engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.o: engine/CMakeFiles/phish_engine.dir/flags.make
+engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.o: /workspace/phish/engine/util/zobrist.cpp
+engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.o: engine/CMakeFiles/phish_engine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/phish/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.o"
+	cd /workspace/phish/build/engine && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.o -MF CMakeFiles/phish_engine.dir/util/zobrist.cpp.o.d -o CMakeFiles/phish_engine.dir/util/zobrist.cpp.o -c /workspace/phish/engine/util/zobrist.cpp
+
+engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/phish_engine.dir/util/zobrist.cpp.i"
+	cd /workspace/phish/build/engine && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/phish/engine/util/zobrist.cpp > CMakeFiles/phish_engine.dir/util/zobrist.cpp.i
+
+engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/phish_engine.dir/util/zobrist.cpp.s"
+	cd /workspace/phish/build/engine && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/phish/engine/util/zobrist.cpp -o CMakeFiles/phish_engine.dir/util/zobrist.cpp.s
+
 engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o: engine/CMakeFiles/phish_engine.dir/flags.make
 engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o: /workspace/phish/engine/bitboard/bitboard.cpp
 engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o: engine/CMakeFiles/phish_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/phish/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/phish/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o"
 	cd /workspace/phish/build/engine && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o -MF CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o.d -o CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o -c /workspace/phish/engine/bitboard/bitboard.cpp
 
 engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.i: cmake_force
@@ -117,7 +131,7 @@ engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.s: cmake_force
 engine/CMakeFiles/phish_engine.dir/board/position.cpp.o: engine/CMakeFiles/phish_engine.dir/flags.make
 engine/CMakeFiles/phish_engine.dir/board/position.cpp.o: /workspace/phish/engine/board/position.cpp
 engine/CMakeFiles/phish_engine.dir/board/position.cpp.o: engine/CMakeFiles/phish_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/phish/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object engine/CMakeFiles/phish_engine.dir/board/position.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/phish/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object engine/CMakeFiles/phish_engine.dir/board/position.cpp.o"
 	cd /workspace/phish/build/engine && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT engine/CMakeFiles/phish_engine.dir/board/position.cpp.o -MF CMakeFiles/phish_engine.dir/board/position.cpp.o.d -o CMakeFiles/phish_engine.dir/board/position.cpp.o -c /workspace/phish/engine/board/position.cpp
 
 engine/CMakeFiles/phish_engine.dir/board/position.cpp.i: cmake_force
@@ -128,23 +142,41 @@ engine/CMakeFiles/phish_engine.dir/board/position.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/phish_engine.dir/board/position.cpp.s"
 	cd /workspace/phish/build/engine && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/phish/engine/board/position.cpp -o CMakeFiles/phish_engine.dir/board/position.cpp.s
 
+engine/CMakeFiles/phish_engine.dir/search/search.cpp.o: engine/CMakeFiles/phish_engine.dir/flags.make
+engine/CMakeFiles/phish_engine.dir/search/search.cpp.o: /workspace/phish/engine/search/search.cpp
+engine/CMakeFiles/phish_engine.dir/search/search.cpp.o: engine/CMakeFiles/phish_engine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/phish/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object engine/CMakeFiles/phish_engine.dir/search/search.cpp.o"
+	cd /workspace/phish/build/engine && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT engine/CMakeFiles/phish_engine.dir/search/search.cpp.o -MF CMakeFiles/phish_engine.dir/search/search.cpp.o.d -o CMakeFiles/phish_engine.dir/search/search.cpp.o -c /workspace/phish/engine/search/search.cpp
+
+engine/CMakeFiles/phish_engine.dir/search/search.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/phish_engine.dir/search/search.cpp.i"
+	cd /workspace/phish/build/engine && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/phish/engine/search/search.cpp > CMakeFiles/phish_engine.dir/search/search.cpp.i
+
+engine/CMakeFiles/phish_engine.dir/search/search.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/phish_engine.dir/search/search.cpp.s"
+	cd /workspace/phish/build/engine && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/phish/engine/search/search.cpp -o CMakeFiles/phish_engine.dir/search/search.cpp.s
+
 # Object files for target phish_engine
 phish_engine_OBJECTS = \
 "CMakeFiles/phish_engine.dir/uci/uci.cpp.o" \
 "CMakeFiles/phish_engine.dir/util/config.cpp.o" \
+"CMakeFiles/phish_engine.dir/util/zobrist.cpp.o" \
 "CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o" \
-"CMakeFiles/phish_engine.dir/board/position.cpp.o"
+"CMakeFiles/phish_engine.dir/board/position.cpp.o" \
+"CMakeFiles/phish_engine.dir/search/search.cpp.o"
 
 # External object files for target phish_engine
 phish_engine_EXTERNAL_OBJECTS =
 
 engine/libphish_engine.a: engine/CMakeFiles/phish_engine.dir/uci/uci.cpp.o
 engine/libphish_engine.a: engine/CMakeFiles/phish_engine.dir/util/config.cpp.o
+engine/libphish_engine.a: engine/CMakeFiles/phish_engine.dir/util/zobrist.cpp.o
 engine/libphish_engine.a: engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o
 engine/libphish_engine.a: engine/CMakeFiles/phish_engine.dir/board/position.cpp.o
+engine/libphish_engine.a: engine/CMakeFiles/phish_engine.dir/search/search.cpp.o
 engine/libphish_engine.a: engine/CMakeFiles/phish_engine.dir/build.make
 engine/libphish_engine.a: engine/CMakeFiles/phish_engine.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/phish/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX static library libphish_engine.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/phish/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX static library libphish_engine.a"
 	cd /workspace/phish/build/engine && $(CMAKE_COMMAND) -P CMakeFiles/phish_engine.dir/cmake_clean_target.cmake
 	cd /workspace/phish/build/engine && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/phish_engine.dir/link.txt --verbose=$(VERBOSE)
 

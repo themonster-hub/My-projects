@@ -187,6 +187,19 @@ phish_engine/fast:
 	$(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/build
 .PHONY : phish_engine/fast
 
+#=============================================================================
+# Target rules for targets named phish_perft
+
+# Build rule for target.
+phish_perft: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 phish_perft
+.PHONY : phish_perft
+
+# fast build rule for target.
+phish_perft/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/phish_perft.dir/build.make tests/CMakeFiles/phish_perft.dir/build
+.PHONY : phish_perft/fast
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -225,6 +238,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... phish"
 	@echo "... phish_engine"
+	@echo "... phish_perft"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

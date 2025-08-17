@@ -26,7 +26,7 @@ enum Piece : int {
     W_KNIGHT = 1,
     W_BISHOP = 2,
     W_ROOK = 3,
-    W_QUeen = 4,
+    W_QUEEN = 4,
     W_KING = 5,
     B_PAWN = 6,
     B_KNIGHT = 7,

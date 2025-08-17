@@ -32,6 +32,11 @@ public:
     Square ep_square() const { return ep; }
     U64 key() const { return hash; }
 
+    // Public queries for search/eval
+    U64 pieces(Piece pc) const { return bbByPiece[pc]; }
+    U64 color_bb(Color c) const { return occByColor[c]; }
+    bool in_check() const { return is_in_check(stm); }
+
     // Make/unmake move. Returns false if move illegal.
     bool make_move(movegen::Move m, StateInfo& st);
     void unmake_move(movegen::Move m, const StateInfo& st);

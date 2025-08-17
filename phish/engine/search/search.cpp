@@ -17,23 +17,22 @@ static int piece_value(PieceType pt) {
     }
 }
 
+static inline int popcount64(U64 v) {
+    return __builtin_popcountll(v);
+}
+
 static int evaluate(const board::Position& pos) {
-    // Very basic material eval from side to move perspective
     int score = 0;
-    for (int s = 0; s < 64; ++s) {
-        int pc = pos.key(); // dummy to silence unused if needed
-        (void)pc;
-    }
-    // Iterate bitboards for speed
     for (int c = 0; c < COLOR_NB; ++c) {
+        int sign = (c == WHITE) ? 1 : -1;
         for (int pt = PAWN; pt <= QUEEN; ++pt) {
-            Piece p = static_cast<Piece>(c * 6 + pt);
-            // We don't have getters; reconstruct from attack arrays is not ideal.
-            // Minimal: probe occupancy by scanning pieceOn is private. Instead skip detailed eval for MVP.
+            Piece piece = static_cast<Piece>(c * 6 + pt);
+            U64 bb = pos.pieces(piece);
+            score += sign * popcount64(bb) * piece_value(static_cast<PieceType>(pt));
         }
     }
-    // Placeholder 0 eval
-    return score;
+    // Side-to-move perspective
+    return (pos.side_to_move() == WHITE) ? score : -score;
 }
 
 TranspositionTable::TranspositionTable(std::size_t mb) { resize(mb); }
@@ -78,7 +77,6 @@ bool TranspositionTable::probe(U64 key, TTEntry& out) const {
 }
 
 static int qsearch(board::Position& pos, int alpha, int beta) {
-    // Placeholder: no captures search, just stand pat
     int stand = evaluate(pos);
     if (stand >= beta) return beta;
     if (stand > alpha) alpha = stand;
@@ -99,13 +97,14 @@ static int negamax(board::Position& pos, int depth, int alpha, int beta, Transpo
     movegen::MoveList moves;
     pos.generate_legal(moves);
     if (moves.size() == 0) {
-        // Checkmate or stalemate
-        if (false) return 0; // TODO: detect check
-        return 0;
+        // Mate or stalemate
+        if (pos.in_check()) return -30000 + (100 - depth); // checkmate score
+        return 0; // stalemate
     }
 
     int bestScore = std::numeric_limits<int>::min() / 2;
     movegen::Move bestMove = 0;
+    int alphaOrig = alpha;
 
     for (auto m : moves.moves) {
         if (!pos.make_move(m, st)) continue;
@@ -120,7 +119,7 @@ static int negamax(board::Position& pos, int depth, int alpha, int beta, Transpo
     }
 
     uint8_t flag = 0;
-    if (bestScore <= alpha) flag = 1; // alpha bound
+    if (bestScore <= alphaOrig) flag = 1; // alpha bound
     else if (bestScore >= beta) flag = 2; // beta bound
     tt.store(pos.key(), depth, bestScore, 0, flag, bestMove);
     return bestScore;
@@ -133,12 +132,11 @@ SearchResult think(board::Position& pos, const Limits& limits, TranspositionTabl
     if (legal.size() == 0) { sr.bestMove = 0; return sr; }
 
     movegen::Move bestMove = legal.moves.front();
-    int alpha = -100000, beta = 100000;
+    int alpha = -30000, beta = 30000;
     for (int d = 1; d <= limits.depth; ++d) {
         int score = negamax(pos, d, alpha, beta, tt);
         (void)score;
-        // We don't reconstruct PV here in MVP; pick TT move when available
-        search::TTEntry tte;
+        TTEntry tte;
         if (tt.probe(pos.key(), tte) && tte.move != 0) bestMove = tte.move;
     }
 

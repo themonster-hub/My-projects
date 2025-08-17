@@ -1,0 +1,2 @@
+"/usr/bin/llvm-ar-20" qc libfoo.a CMakeFiles/foo.dir/foo.cpp.o
+"/usr/bin/llvm-ranlib-20" libfoo.a

@@ -36,10 +36,15 @@ public:
     U64 pieces(Piece pc) const { return bbByPiece[pc]; }
     U64 color_bb(Color c) const { return occByColor[c]; }
     bool in_check() const { return is_in_check(stm); }
+    int piece_at(Square s) const { return pieceOn[s]; }
 
     // Make/unmake move. Returns false if move illegal.
     bool make_move(movegen::Move m, StateInfo& st);
     void unmake_move(movegen::Move m, const StateInfo& st);
+
+    // Null move for search pruning
+    bool make_null_move(StateInfo& st);
+    void unmake_null_move(const StateInfo& st);
 
     // Generate legal moves into list
     void generate_legal(movegen::MoveList& list) const;

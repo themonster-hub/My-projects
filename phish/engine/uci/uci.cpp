@@ -143,13 +143,27 @@ std::string move_to_uci(movegen::Move m) {
 }
 
 void handle_go(const std::vector<std::string>& tokens, PositionState& st, search::TranspositionTable& tt) {
-    // Parse depth only for MVP
+    // Parse depth and simple movetime/wtime/btime for MVP
     int depth = 1;
-    for (std::size_t i = 1; i + 1 < tokens.size(); ++i) {
-        if (tokens[i] == "depth") depth = std::atoi(tokens[i + 1].c_str());
+    int64_t movetime = 0;
+    int64_t wtime = 0, btime = 0, winc = 0, binc = 0;
+    for (std::size_t i = 1; i < tokens.size(); ++i) {
+        if (tokens[i] == "depth" && i + 1 < tokens.size()) depth = std::atoi(tokens[i + 1].c_str());
+        if (tokens[i] == "movetime" && i + 1 < tokens.size()) movetime = std::atoll(tokens[i + 1].c_str());
+        if (tokens[i] == "wtime" && i + 1 < tokens.size()) wtime = std::atoll(tokens[i + 1].c_str());
+        if (tokens[i] == "btime" && i + 1 < tokens.size()) btime = std::atoll(tokens[i + 1].c_str());
+        if (tokens[i] == "winc" && i + 1 < tokens.size()) winc = std::atoll(tokens[i + 1].c_str());
+        if (tokens[i] == "binc" && i + 1 < tokens.size()) binc = std::atoll(tokens[i + 1].c_str());
     }
     search::Limits lim; lim.depth = depth;
+    if (movetime > 0) { lim.timeMs = movetime; }
+    else {
+        bool white = st.pos.side_to_move() == WHITE;
+        lim.timeMs = white ? wtime : btime;
+        lim.incMs = white ? winc : binc;
+    }
     auto res = search::think(st.pos, lim, tt);
+    std::cout << "info string nodes " << res.nodes << '\n';
     std::cout << "bestmove " << move_to_uci(res.bestMove) << '\n' << std::flush;
 }
 

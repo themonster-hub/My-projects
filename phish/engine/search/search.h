@@ -38,11 +38,15 @@ private:
 
 struct Limits {
     int depth = 1;
+    int64_t timeMs = 0;
+    int64_t incMs = 0;
+    bool infinite = false;
 };
 
 struct SearchResult {
     movegen::Move bestMove = 0;
     std::vector<movegen::Move> pv;
+    uint64_t nodes = 0;
 };
 
 SearchResult think(board::Position& pos, const Limits& limits, TranspositionTable& tt);

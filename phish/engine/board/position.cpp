@@ -497,6 +497,28 @@ void Position::unmake_move(movegen::Move m, const StateInfo& st) {
     }
 }
 
+bool Position::make_null_move(StateInfo& st) {
+    if (in_check()) return false;
+    st.castlingRights = castling;
+    st.epSquare = ep;
+    st.halfmoveClock = halfmove;
+    st.hash = hash;
+    st.captured = NO_PIECE;
+    if (ep != SQ_NONE) hash ^= zobrist::EP_FILE[file_of(ep)];
+    ep = SQ_NONE;
+    hash ^= zobrist::SIDE_TO_MOVE;
+    stm = opposite(stm);
+    return true;
+}
+
+void Position::unmake_null_move(const StateInfo& st) {
+    stm = opposite(stm);
+    castling = st.castlingRights;
+    ep = st.epSquare;
+    halfmove = st.halfmoveClock;
+    hash = st.hash;
+}
+
 bool Position::play_uci_move(const std::string& uci) {
     if (uci.size() < 4) return false;
     int f1 = uci[0] - 'a', r1 = uci[1] - '1';

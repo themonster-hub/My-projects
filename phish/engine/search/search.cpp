@@ -17,9 +17,7 @@ static int piece_value(PieceType pt) {
     }
 }
 
-static inline int popcount64(U64 v) {
-    return __builtin_popcountll(v);
-}
+static inline int popcount64(U64 v) { return __builtin_popcountll(v); }
 
 static int evaluate(const board::Position& pos) {
     int score = 0;
@@ -31,7 +29,6 @@ static int evaluate(const board::Position& pos) {
             score += sign * popcount64(bb) * piece_value(static_cast<PieceType>(pt));
         }
     }
-    // Side-to-move perspective
     return (pos.side_to_move() == WHITE) ? score : -score;
 }
 
@@ -76,39 +73,75 @@ bool TranspositionTable::probe(U64 key, TTEntry& out) const {
     return false;
 }
 
+static uint64_t g_nodes;
+
 static int qsearch(board::Position& pos, int alpha, int beta) {
+    ++g_nodes;
     int stand = evaluate(pos);
     if (stand >= beta) return beta;
     if (stand > alpha) alpha = stand;
     return alpha;
 }
 
+static int score_move(movegen::Move m, movegen::Move ttMove) {
+    if (m == ttMove) return 1000000;
+    // Captures are better
+    return movegen::is_capture(m) ? 10000 : 0;
+}
+
 static int negamax(board::Position& pos, int depth, int alpha, int beta, TranspositionTable& tt) {
     if (depth == 0) return qsearch(pos, alpha, beta);
 
-    TTEntry tte;
+    TTEntry tte{};
+    movegen::Move ttMove = 0;
     if (tt.probe(pos.key(), tte) && tte.depth >= depth) {
         if (tte.flag == 0) return tte.score;
         if (tte.flag == 1 && tte.score <= alpha) return alpha;
         if (tte.flag == 2 && tte.score >= beta) return beta;
+        ttMove = tte.move;
+    }
+
+    // Null-move pruning
+    if (depth >= 3 && !pos.in_check()) {
+        board::StateInfo st;
+        if (pos.make_null_move(st)) {
+            int R = 2;
+            int score = -negamax(pos, depth - 1 - R, -beta, -beta + 1, tt);
+            pos.unmake_null_move(st);
+            if (score >= beta) return beta;
+        }
     }
 
     board::StateInfo st;
     movegen::MoveList moves;
     pos.generate_legal(moves);
     if (moves.size() == 0) {
-        // Mate or stalemate
-        if (pos.in_check()) return -30000 + (100 - depth); // checkmate score
-        return 0; // stalemate
+        if (pos.in_check()) return -30000 + (100 - depth);
+        return 0;
     }
+
+    // Order moves
+    std::sort(moves.moves.begin(), moves.moves.end(), [&](movegen::Move a, movegen::Move b){
+        return score_move(a, ttMove) > score_move(b, ttMove);
+    });
 
     int bestScore = std::numeric_limits<int>::min() / 2;
     movegen::Move bestMove = 0;
     int alphaOrig = alpha;
 
     for (auto m : moves.moves) {
+        ++g_nodes;
         if (!pos.make_move(m, st)) continue;
-        int score = -negamax(pos, depth - 1, -beta, -alpha, tt);
+        // PVS
+        int score;
+        if (bestMove == 0) {
+            score = -negamax(pos, depth - 1, -beta, -alpha, tt);
+        } else {
+            score = -negamax(pos, depth - 1, -alpha - 1, -alpha, tt);
+            if (score > alpha && score < beta) {
+                score = -negamax(pos, depth - 1, -beta, -alpha, tt);
+            }
+        }
         pos.unmake_move(m, st);
         if (score > bestScore) {
             bestScore = score;
@@ -119,8 +152,8 @@ static int negamax(board::Position& pos, int depth, int alpha, int beta, Transpo
     }
 
     uint8_t flag = 0;
-    if (bestScore <= alphaOrig) flag = 1; // alpha bound
-    else if (bestScore >= beta) flag = 2; // beta bound
+    if (bestScore <= alphaOrig) flag = 1;
+    else if (bestScore >= beta) flag = 2;
     tt.store(pos.key(), depth, bestScore, 0, flag, bestMove);
     return bestScore;
 }
@@ -131,6 +164,7 @@ SearchResult think(board::Position& pos, const Limits& limits, TranspositionTabl
     pos.generate_legal(legal);
     if (legal.size() == 0) { sr.bestMove = 0; return sr; }
 
+    g_nodes = 0;
     movegen::Move bestMove = legal.moves.front();
     int alpha = -30000, beta = 30000;
     for (int d = 1; d <= limits.depth; ++d) {
@@ -141,6 +175,7 @@ SearchResult think(board::Position& pos, const Limits& limits, TranspositionTabl
     }
 
     sr.bestMove = bestMove;
+    sr.nodes = g_nodes;
     return sr;
 }
 

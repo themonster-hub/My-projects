@@ -15,7 +15,8 @@ extern U64 RANK_MASKS[8];
 
 void init();
 
-U64 sliding_attacks_rook(Square from, U64 occ);
-U64 sliding_attacks_bishop(Square from, U64 occ);
+// Optimized sliding attacks (use PEXT tables when available, fallback otherwise)
+U64 rook_attacks(Square from, U64 occ);
+U64 bishop_attacks(Square from, U64 occ);
 
 } // namespace phish::bitboard

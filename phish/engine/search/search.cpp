@@ -85,8 +85,17 @@ static int qsearch(board::Position& pos, int alpha, int beta) {
 
 static int score_move(movegen::Move m, movegen::Move ttMove) {
     if (m == ttMove) return 1000000;
-    // Captures are better
     return movegen::is_capture(m) ? 10000 : 0;
+}
+
+static bool see_winning(const board::Position& pos, movegen::Move m) {
+    // Simple heuristic: promotion or capture of a high-value piece considered winning
+    if (movegen::is_promotion(m)) return true;
+    if (!movegen::is_capture(m)) return false;
+    int victim = pos.piece_at(movegen::to_sq(m));
+    if (victim == NO_PIECE) return false;
+    PieceType vpt = static_cast<PieceType>(victim % 6);
+    return piece_value(vpt) >= 300; // capture of minor piece or better
 }
 
 static int negamax(board::Position& pos, int depth, int alpha, int beta, TranspositionTable& tt) {
@@ -101,7 +110,6 @@ static int negamax(board::Position& pos, int depth, int alpha, int beta, Transpo
         ttMove = tte.move;
     }
 
-    // Null-move pruning
     if (depth >= 3 && !pos.in_check()) {
         board::StateInfo st;
         if (pos.make_null_move(st)) {
@@ -120,7 +128,6 @@ static int negamax(board::Position& pos, int depth, int alpha, int beta, Transpo
         return 0;
     }
 
-    // Order moves
     std::sort(moves.moves.begin(), moves.moves.end(), [&](movegen::Move a, movegen::Move b){
         return score_move(a, ttMove) > score_move(b, ttMove);
     });
@@ -129,20 +136,29 @@ static int negamax(board::Position& pos, int depth, int alpha, int beta, Transpo
     movegen::Move bestMove = 0;
     int alphaOrig = alpha;
 
+    int moveIndex = 0;
     for (auto m : moves.moves) {
         ++g_nodes;
         if (!pos.make_move(m, st)) continue;
-        // PVS
+
+        int newDepth = depth - 1;
+        // Late move reductions for quiet, non-winning moves
+        if (!pos.in_check() && !movegen::is_capture(m) && !movegen::is_promotion(m) && moveIndex > 3 && depth >= 3) {
+            newDepth -= 1;
+        }
+
         int score;
         if (bestMove == 0) {
-            score = -negamax(pos, depth - 1, -beta, -alpha, tt);
+            score = -negamax(pos, newDepth, -beta, -alpha, tt);
         } else {
-            score = -negamax(pos, depth - 1, -alpha - 1, -alpha, tt);
+            score = -negamax(pos, newDepth, -alpha - 1, -alpha, tt);
             if (score > alpha && score < beta) {
-                score = -negamax(pos, depth - 1, -beta, -alpha, tt);
+                score = -negamax(pos, newDepth, -beta, -alpha, tt);
             }
         }
         pos.unmake_move(m, st);
+        ++moveIndex;
+
         if (score > bestScore) {
             bestScore = score;
             bestMove = m;

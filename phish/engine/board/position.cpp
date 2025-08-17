@@ -157,10 +157,10 @@ bool Position::is_square_attacked(Square s, Color by) const {
     if (bitboard::KING_ATTACKS[s] & bbByPiece[make_piece(by, KING)]) return true;
     // Bishops/Queens
     U64 bishops = bbByPiece[make_piece(by, BISHOP)] | bbByPiece[make_piece(by, QUEEN)];
-    if (bitboard::sliding_attacks_bishop(s, occupancy()) & bishops) return true;
+    if (bitboard::bishop_attacks(s, occupancy()) & bishops) return true;
     // Rooks/Queens
     U64 rooks = bbByPiece[make_piece(by, ROOK)] | bbByPiece[make_piece(by, QUEEN)];
-    if (bitboard::sliding_attacks_rook(s, occupancy()) & rooks) return true;
+    if (bitboard::rook_attacks(s, occupancy()) & rooks) return true;
     return false;
 }
 
@@ -246,7 +246,7 @@ void Position::gen_bishop_moves(Color c, movegen::MoveList& list) const {
     while (bishops) {
         Square from = static_cast<Square>(__builtin_ctzll(bishops));
         bishops &= bishops - 1;
-        U64 targets = bitboard::sliding_attacks_bishop(from, occupancy()) & ~own;
+        U64 targets = bitboard::bishop_attacks(from, occupancy()) & ~own;
         while (targets) {
             Square to = static_cast<Square>(__builtin_ctzll(targets));
             targets &= targets - 1;
@@ -262,7 +262,7 @@ void Position::gen_rook_moves(Color c, movegen::MoveList& list) const {
     while (rooks) {
         Square from = static_cast<Square>(__builtin_ctzll(rooks));
         rooks &= rooks - 1;
-        U64 targets = bitboard::sliding_attacks_rook(from, occupancy()) & ~own;
+        U64 targets = bitboard::rook_attacks(from, occupancy()) & ~own;
         while (targets) {
             Square to = static_cast<Square>(__builtin_ctzll(targets));
             targets &= targets - 1;
@@ -278,8 +278,8 @@ void Position::gen_queen_moves(Color c, movegen::MoveList& list) const {
     while (queens) {
         Square from = static_cast<Square>(__builtin_ctzll(queens));
         queens &= queens - 1;
-        U64 targets = (bitboard::sliding_attacks_bishop(from, occupancy()) |
-                       bitboard::sliding_attacks_rook(from, occupancy())) & ~own;
+        U64 targets = (bitboard::bishop_attacks(from, occupancy()) |
+                       bitboard::rook_attacks(from, occupancy())) & ~own;
         while (targets) {
             Square to = static_cast<Square>(__builtin_ctzll(targets));
             targets &= targets - 1;

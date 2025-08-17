@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG -flto=thin -Xlinker --dependency-file=CMakeFiles/phish.dir/link.d CMakeFiles/phish.dir/main.cpp.o -o phish  engine/libphish_engine.a

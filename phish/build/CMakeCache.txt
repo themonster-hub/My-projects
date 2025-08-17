@@ -208,6 +208,9 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 //Enable link-time optimization
 PHISH_ENABLE_LTO:BOOL=ON
 
+//Enable -Ofast (may break strict IEEE semantics)
+PHISH_ENABLE_OFAST:BOOL=OFF
+
 //Value Computed by CMake
 Phish_BINARY_DIR:STATIC=/workspace/phish/build
 
@@ -353,6 +356,12 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//Test HAS_MARCH_NATIVE
+HAS_MARCH_NATIVE:INTERNAL=1
+//Test HAS_NO_EXC
+HAS_NO_EXC:INTERNAL=1
+//Test HAS_NO_RTTI
+HAS_NO_RTTI:INTERNAL=1
 //linker supports push/pop state
 _CMAKE_CXX_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
 //linker supports push/pop state

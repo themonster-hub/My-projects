@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/workspace/phish/engine/..
 
-CXX_FLAGS = -O3 -DNDEBUG -std=c++20 -flto=thin -Wall -Wextra -Wpedantic -Wshadow -O3
+CXX_FLAGS = -O3 -DNDEBUG -std=c++20 -flto=thin -Wall -Wextra -Wpedantic -Wshadow -O3 -DNDEBUG -march=native -mtune=native -fno-exceptions -fno-rtti
 

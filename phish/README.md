@@ -1,98 +1,136 @@
 # Phish Chess Engine (Experimental)
 
-Phish is a modern chess engine project targeting strong, fast play with a clean architecture. This repository currently contains an experimental prototype: correct move generation, UCI protocol, basic search with transposition table and pruning, and a small perft harness.
+Phish is a modern chess engine targeting strong and fast play with a clean architecture. This repository currently contains an experimental prototype: correct move generation, UCI protocol, basic search with TT/pruning, and a small perft harness.
 
-Status: Experimental. Interfaces and internals will change. Strength is not tuned and is far below top engines.
+Status: Experimental. Interfaces and internals change quickly. Strength is not tuned.
 
 ## Features (current)
 - C++20 codebase, CMake build
-- Bitboards with precomputed attacks for king/knight/pawns; simple sliding attacks
-- Legal move generation and FEN parsing
-- Zobrist hashing and exact make/unmake (incl. EP, castling, promotion)
-- UCI protocol: position/go/perft/setoption
-- Search skeleton: iterative deepening, PVS, TT, null-move pruning, simple material eval
-- Perft tool and basic test list (startpos depths 1–3)
+- Bitboards (precomputed attacks), legal movegen, FEN parsing
+- Zobrist hashing; exact make/unmake (EP, castling, promotion)
+- UCI: position/go/perft/setoption
+- Search: iterative deepening, PVS, TT, null-move pruning, basic material eval
+- Perft harness and tests (startpos depths 1–3)
 
-## Requirements
+## Install and Setup
+### Requirements
 - CMake ≥ 3.16
-- A C++20 compiler (clang ≥ 12, or gcc ≥ 11 recommended)
-- Linux/macOS (Windows/MSVC support planned)
+- C++20 compiler (clang ≥ 12 or gcc ≥ 11 recommended)
+- Linux/macOS. Windows is possible with MSVC; Android below.
 
-Optional: LTO/IPO enabled by default (PHISH_ENABLE_LTO=ON). Disable with -DPHISH_ENABLE_LTO=OFF if toolchain/linker has issues.
-
-## Build
+### Build (Release)
 ```
 cmake -S /workspace/phish -B /workspace/phish/build -DCMAKE_BUILD_TYPE=Release
 cmake --build /workspace/phish/build -j
 ```
-The engine binary will be at:
+Engine binary:
 ```
 /workspace/phish/build/phish
 ```
 
-## Run (UCI)
-Phish speaks UCI. Example:
+Optional flags:
+- Enable/disable LTO/IPO:
+```
+-DPHISH_ENABLE_LTO=ON|OFF
+```
+- Enable aggressive `-Ofast` (may break strict IEEE):
+```
+-DPHISH_ENABLE_OFAST=ON
+```
+
+### Run (UCI)
+Run in a terminal or any UCI GUI:
 ```
 /workspace/phish/build/phish
 uci
 isready
 position startpos
-go depth 6
+go depth 8
 ```
-Example with a short line:
+A short line example:
 ```
 position startpos moves e2e4 e7e5 g1f3 b8c6
-go depth 5
+go depth 6
 ```
 
-Supported UCI options (subset):
-- Hash (MB)
-- Threads (placeholder; SMP not yet implemented)
-- Ponder (placeholder)
-- SyzygyPath, SyzygyProbeDepth (placeholders)
-- UseNNUE, EvalFile (placeholders)
-- Contempt
-- MoveOverhead
-- MultiPV (placeholder)
+Supported options (subset):
+- Hash (MB), Contempt, MoveOverhead
+- Threads, Ponder, MultiPV, SyzygyPath/ProbeDepth, UseNNUE/EvalFile (placeholders for now)
 
-## Perft tests
-A tiny perft harness is included.
-
-Run with default list:
+### Perft tests
 ```
 /workspace/phish/build/tests/phish_perft /workspace/phish/tests/perft/perft_positions.txt
 ```
-Edit `tests/perft/perft_positions.txt` to add more FENs and depths:
+Format:
 ```
 <fen or startpos>;<depth>;<expected_nodes>
 ```
+
+## Android / DroidFish (UCI engine)
+DroidFish supports UCI engines on Android. You need an Android-native binary (AArch64/ARMv7) built with the Android NDK:
+
+1) Install Android NDK and CMake (Android Studio or CLI).
+2) Build a static binary for arm64-v8a:
+- Create a toolchain build directory and use Android toolchain file:
+```
+cmake -S /workspace/phish -B /workspace/phish/build-android \
+  -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake \
+  -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-21 \
+  -DCMAKE_BUILD_TYPE=Release -DPHISH_ENABLE_LTO=OFF
+cmake --build /workspace/phish/build-android -j
+```
+3) The engine binary will be at (example path):
+```
+/workspace/phish/build-android/phish
+```
+4) Copy the binary to your phone and make it executable (if needed). In DroidFish:
+- Menu → Manage Chess Engines → UCI engine → Add Engine
+- Select the `phish` binary
+
+Notes:
+- Some Android devices require PIE and no-glibc dependencies. The NDK cross-compile above produces a compatible binary.
+- If DroidFish cannot load the engine due to permissions, use a file manager to set execute permission or place it under app-accessible storage.
+- Current build has no NNUE file dependency; future versions may require copying a `.nnue` file alongside the binary.
+
+If Android is not supported in your environment, build on-device with Termux:
+- Install `clang`, `cmake`, `make` in Termux
+- Build with:
+```
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPHISH_ENABLE_LTO=OFF
+cmake --build build -j
+```
+Then add the `build/phish` binary to DroidFish as above.
+
+## Optimization Notes
+- Release builds use `-O3 -DNDEBUG`, LTO/IPO when supported
+- Optional `-march=native -mtune=native` for local tuning
+- Optional `-Ofast` via `-DPHISH_ENABLE_OFAST=ON`
+- Leaner builds: `-fno-exceptions -fno-rtti` enabled if supported
+- Linker tuned with `-Wl,-O1,--as-needed` on GCC/Clang
+
+Future performance work:
+- Magic bitboards or PEXT for sliders
+- SEE, LMR/LMP, futility/razoring/IID, killer/history/countermoves
+- SIMD NNUE inference (AVX2/NEON), incremental updates
+- SMP (Lazy SMP), lock-free clustered TT, prefetching
+- Time management, pondering, Syzygy
 
 ## Project layout
 ```
 phish/
  ├─ engine/
- │   ├─ bitboard/      # attack tables, sliding attacks
- │   ├─ board/         # Position, make/unmake, FEN
- │   ├─ movegen/       # moves + encoding
- │   ├─ search/        # PVS/TT/null-move (experimental)
- │   ├─ uci/           # UCI loop
- │   └─ util/          # config, types, zobrist
+ │   ├─ bitboard/
+ │   ├─ board/
+ │   ├─ movegen/
+ │   ├─ search/
+ │   ├─ uci/
+ │   └─ util/
  └─ tests/
-     └─ perft/         # perft tool + positions
+     └─ perft/
 ```
-
-## Roadmap (high level)
-- Correctness: expand perft suite; pins/check evasions edge cases; fuzzing
-- Strength: SEE, LMR/LMP, futility/razoring/IID, killer/history/countermove heuristics
-- NNUE: HalfKP/KxP features, incremental updates, SIMD inference (AVX2/NEON)
-- Time management and pondering
-- SMP (Lazy SMP), lock-free clustered TT
-- Syzygy WDL/DTZ probing
-- Training + A/B testing (SPRT)
 
 ## Version
 - 0.1.0 (experimental)
 
-## Notes
-- This is a research/prototype engine. Expect rapid iteration and breaking changes.
-- Performance flags: release builds use -O3; LTO is enabled if supported.
+## Disclaimer
+- Prototype engine; not tuned; subject to change.

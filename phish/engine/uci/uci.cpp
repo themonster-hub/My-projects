@@ -10,6 +10,8 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <atomic>
+#include <mutex>
 
 #include "engine/util/config.h"
 #include "engine/bitboard/bitboard.h"
@@ -142,29 +144,90 @@ std::string move_to_uci(movegen::Move m) {
     return std::string(buf);
 }
 
-void handle_go(const std::vector<std::string>& tokens, PositionState& st, search::TranspositionTable& tt) {
-    // Parse depth and simple movetime/wtime/btime for MVP
-    int depth = 1;
+struct SearchController {
+    std::atomic<bool> thinking{false};
+    std::atomic<bool> stop{false};
+    std::thread worker;
+    movegen::Move lastBest{0};
+    uint64_t lastNodes{0};
+    std::mutex mtx; // protects lastBest/lastNodes
+};
+
+void start_search(SearchController& ctrl, PositionState& st, search::TranspositionTable& tt, const search::Limits& lim) {
+    // Ensure previous is stopped
+    if (ctrl.thinking.load()) {
+        ctrl.stop.store(true);
+        if (ctrl.worker.joinable()) ctrl.worker.join();
+        ctrl.thinking.store(false);
+    }
+    ctrl.stop.store(false);
+
+    ctrl.worker = std::thread([&ctrl, &st, &tt, lim](){
+        auto infoCb = [&](int depth, int score, uint64_t nodes, int64_t elapsedMs, const std::vector<movegen::Move>& pv){
+            int64_t nps = (elapsedMs > 0) ? static_cast<int64_t>((nodes * 1000) / elapsedMs) : 0;
+            std::cout << "info depth " << depth
+                      << " score cp " << score
+                      << " time " << elapsedMs
+                      << " nodes " << nodes
+                      << " nps " << nps
+                      << " pv";
+            for (auto m : pv) std::cout << ' ' << move_to_uci(m);
+            std::cout << '\n' << std::flush;
+            std::lock_guard<std::mutex> lk(ctrl.mtx);
+            if (!pv.empty()) ctrl.lastBest = pv.front();
+            ctrl.lastNodes = nodes;
+        };
+        search::SearchResult sr = search::think(st.pos, lim, tt, ctrl.stop, infoCb);
+        {
+            std::lock_guard<std::mutex> lk(ctrl.mtx);
+            if (sr.bestMove != 0) ctrl.lastBest = sr.bestMove;
+            ctrl.lastNodes = sr.nodes;
+        }
+        std::cout << "bestmove " << move_to_uci(sr.bestMove) << '\n' << std::flush;
+        ctrl.thinking.store(false);
+    });
+    ctrl.thinking.store(true);
+}
+
+void stop_search(SearchController& ctrl) {
+    if (ctrl.thinking.load()) {
+        ctrl.stop.store(true);
+        if (ctrl.worker.joinable()) ctrl.worker.join();
+        ctrl.thinking.store(false);
+    }
+}
+
+void handle_go(const std::vector<std::string>& tokens, PositionState& st, search::TranspositionTable& tt, SearchController& ctrl) {
+    int depth = 64; // default to deep iterative
     int64_t movetime = 0;
     int64_t wtime = 0, btime = 0, winc = 0, binc = 0;
+    int64_t nodes = 0;
+    bool infinite = false;
+
     for (std::size_t i = 1; i < tokens.size(); ++i) {
-        if (tokens[i] == "depth" && i + 1 < tokens.size()) depth = std::atoi(tokens[i + 1].c_str());
-        if (tokens[i] == "movetime" && i + 1 < tokens.size()) movetime = std::atoll(tokens[i + 1].c_str());
-        if (tokens[i] == "wtime" && i + 1 < tokens.size()) wtime = std::atoll(tokens[i + 1].c_str());
-        if (tokens[i] == "btime" && i + 1 < tokens.size()) btime = std::atoll(tokens[i + 1].c_str());
-        if (tokens[i] == "winc" && i + 1 < tokens.size()) winc = std::atoll(tokens[i + 1].c_str());
-        if (tokens[i] == "binc" && i + 1 < tokens.size()) binc = std::atoll(tokens[i + 1].c_str());
+        const std::string& t = tokens[i];
+        if (t == "depth" && i + 1 < tokens.size()) depth = std::atoi(tokens[++i].c_str());
+        else if (t == "movetime" && i + 1 < tokens.size()) movetime = std::atoll(tokens[++i].c_str());
+        else if (t == "wtime" && i + 1 < tokens.size()) wtime = std::atoll(tokens[++i].c_str());
+        else if (t == "btime" && i + 1 < tokens.size()) btime = std::atoll(tokens[++i].c_str());
+        else if (t == "winc" && i + 1 < tokens.size()) winc = std::atoll(tokens[++i].c_str());
+        else if (t == "binc" && i + 1 < tokens.size()) binc = std::atoll(tokens[++i].c_str());
+        else if (t == "nodes" && i + 1 < tokens.size()) nodes = std::atoll(tokens[++i].c_str());
+        else if (t == "infinite") infinite = true;
+        else if (t == "ponder") { /* ignored for now */ }
+        else if (t == "searchmoves") { /* not implemented */ break; }
     }
-    search::Limits lim; lim.depth = depth;
-    if (movetime > 0) { lim.timeMs = movetime; }
-    else {
-        bool white = st.pos.side_to_move() == WHITE;
-        lim.timeMs = white ? wtime : btime;
-        lim.incMs = white ? winc : binc;
-    }
-    auto res = search::think(st.pos, lim, tt);
-    std::cout << "info string nodes " << res.nodes << '\n';
-    std::cout << "bestmove " << move_to_uci(res.bestMove) << '\n' << std::flush;
+
+    search::Limits lim;
+    lim.depth = depth;
+    lim.movetimeMs = movetime;
+    bool white = st.pos.side_to_move() == WHITE;
+    lim.timeMs = white ? wtime : btime;
+    lim.incMs = white ? winc : binc;
+    lim.maxNodes = nodes;
+    lim.infinite = infinite;
+
+    start_search(ctrl, st, tt, lim);
 }
 
 void handle_perft(const std::vector<std::string>& tokens, PositionState& st) {
@@ -182,6 +245,8 @@ void run() {
     PositionState state;
     state.pos.set_fen("startpos");
     search::TranspositionTable tt(static_cast<std::size_t>(options().hashMb));
+
+    SearchController ctrl;
 
     std::string line;
     while (std::getline(std::cin, line)) {
@@ -202,22 +267,42 @@ void run() {
             // Resize TT if hash changed
             tt.resize(static_cast<std::size_t>(options().hashMb));
         } else if (cmd == "ucinewgame") {
+            stop_search(ctrl);
             state.pos.set_fen("startpos");
             tt.clear();
         } else if (cmd == "position") {
+            stop_search(ctrl);
             handle_position(tokens, state);
         } else if (cmd == "go") {
-            handle_go(tokens, state, tt);
+            handle_go(tokens, state, tt, ctrl);
         } else if (cmd == "stop") {
-            std::cout << "bestmove 0000" << '\n' << std::flush;
+            stop_search(ctrl);
+            movegen::Move bm;
+            uint64_t nodes;
+            {
+                std::lock_guard<std::mutex> lk(ctrl.mtx);
+                bm = ctrl.lastBest;
+                nodes = ctrl.lastNodes;
+            }
+            if (bm == 0) {
+                // As a fallback, pick first legal move
+                movegen::MoveList legal;
+                state.pos.generate_legal(legal);
+                bm = legal.size() ? legal.moves.front() : 0;
+            }
+            std::cout << "info string nodes " << nodes << '\n';
+            std::cout << "bestmove " << move_to_uci(bm) << '\n' << std::flush;
         } else if (cmd == "bench") {
             std::cout << "info string bench not implemented" << '\n';
             std::cout << "bestmove 0000" << '\n' << std::flush;
         } else if (cmd == "perft") {
+            stop_search(ctrl);
             handle_perft(tokens, state);
         } else if (cmd == "quit") {
+            stop_search(ctrl);
             break;
         } else if (cmd == "ponderhit") {
+            // Not implemented; continue the current search as normal
         } else if (cmd == "eval" || cmd == "d") {
             std::cout << "info string debug print not implemented" << '\n' << std::flush;
         } else if (cmd == "help") {

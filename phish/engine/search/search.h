@@ -2,6 +2,8 @@
 
 #include <cstdint>
 #include <vector>
+#include <atomic>
+#include <functional>
 
 #include "engine/util/types.h"
 #include "engine/movegen/move.h"
@@ -38,8 +40,10 @@ private:
 
 struct Limits {
     int depth = 1;
-    int64_t timeMs = 0;
-    int64_t incMs = 0;
+    int64_t timeMs = 0;   // Remaining time for side to move (if > 0)
+    int64_t incMs = 0;    // Increment per move (if any)
+    int64_t movetimeMs = 0; // Exact movetime (overrides timeMs/incMs if > 0)
+    int64_t maxNodes = 0; // Node limit (0 = unlimited)
     bool infinite = false;
 };
 
@@ -49,6 +53,8 @@ struct SearchResult {
     uint64_t nodes = 0;
 };
 
-SearchResult think(board::Position& pos, const Limits& limits, TranspositionTable& tt);
+using InfoCallback = std::function<void(int depth, int score, uint64_t nodes, int64_t elapsedMs, const std::vector<movegen::Move>& pv)>;
+
+SearchResult think(board::Position& pos, const Limits& limits, TranspositionTable& tt, std::atomic<bool>& stop, InfoCallback infoCb = nullptr);
 
 } // namespace phish::search

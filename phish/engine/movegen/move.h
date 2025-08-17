@@ -11,16 +11,17 @@ using Move = std::uint32_t;
 
 enum MoveFlags : std::uint32_t {
     QUIET = 0,
-    CAPTURE = 1u << 14,
-    DOUBLE_PUSH = 1u << 15,
-    EN_PASSANT = 1u << 16,
-    KING_CASTLE = 1u << 17,
-    QUEEN_CASTLE = 1u << 18,
-    PROMOTION = 1u << 19
+    // Bits layout:
+    // 0-5: from, 6-11: to, 12-14: promo piece, flags start at bit 15
+    CAPTURE = 1u << 15,
+    DOUBLE_PUSH = 1u << 16,
+    EN_PASSANT = 1u << 17,
+    KING_CASTLE = 1u << 18,
+    QUEEN_CASTLE = 1u << 19,
+    PROMOTION = 1u << 20
 };
 
 inline Move make_move(Square from, Square to, std::uint32_t flags = 0, PieceType promo = NO_PIECE_TYPE) {
-    // bits: 0-5 from, 6-11 to, 12-14 promo(3 bits), 14.. flags (overlap ok since PROMO guard)
     std::uint32_t m = 0;
     m |= static_cast<std::uint32_t>(from);
     m |= static_cast<std::uint32_t>(to) << 6;
@@ -44,6 +45,7 @@ inline PieceType promotion_piece(Move m) { return static_cast<PieceType>((m >> 1
 
 struct MoveList {
     std::vector<Move> moves;
+    MoveList() { moves.reserve(256); }
     void clear() { moves.clear(); }
     void add(Move m) { moves.push_back(m); }
     std::size_t size() const { return moves.size(); }

@@ -20,6 +20,8 @@ static int piece_value(PieceType pt) {
 
 static inline int popcount64(U64 v) { return __builtin_popcountll(v); }
 
+static inline PieceType type_of_piece(Piece p) { return static_cast<PieceType>(static_cast<int>(p) % 6); }
+
 static int evaluate(const board::Position& pos) {
     int score = 0;
     for (int c = 0; c < COLOR_NB; ++c) {
@@ -79,6 +81,7 @@ static uint64_t g_nodes;
 // Simple killers and history
 static movegen::Move g_killer[128][2]{}; // depth -> two killers
 static int g_history[12][64]{};          // moved piece -> to-square history
+static movegen::Move g_countermove[12][64]{}; // prev moved piece + prev to square -> good reply
 
 static int qsearch(board::Position& pos, int alpha, int beta, std::atomic<bool>& stop) {
     if (stop.load(std::memory_order_relaxed)) return alpha;
@@ -106,6 +109,12 @@ static int qsearch(board::Position& pos, int alpha, int beta, std::atomic<bool>&
 
     board::StateInfo st;
     for (auto m : caps) {
+        // Delta pruning: if even capturing biggest plausible gain cannot reach alpha, skip
+        Square to = movegen::to_sq(m);
+        Piece capPc = static_cast<Piece>(pos.piece_at(to));
+        PieceType capType = movegen::is_enpassant(m) ? PAWN : (capPc == NO_PIECE ? NO_PIECE_TYPE : type_of_piece(capPc));
+        if (stand + piece_value(capType) + 100 < alpha) continue;
+
         if (!pos.make_move(m, st)) continue;
         int score = -qsearch(pos, -beta, -alpha, stop);
         pos.unmake_move(m, st);
@@ -116,21 +125,47 @@ static int qsearch(board::Position& pos, int alpha, int beta, std::atomic<bool>&
     return alpha;
 }
 
-static int score_move(movegen::Move m, movegen::Move ttMove, movegen::Move killer1, movegen::Move killer2, Piece movedPiece) {
-    if (m == ttMove) return 1'000'000;
+static inline int mvv_lva(const board::Position& pos, movegen::Move m) {
+    if (!movegen::is_capture(m)) return 0;
+    Piece attacker = static_cast<Piece>(pos.piece_at(movegen::from_sq(m)));
+    Piece victim = static_cast<Piece>(pos.piece_at(movegen::to_sq(m)));
+    PieceType a = attacker == NO_PIECE ? NO_PIECE_TYPE : type_of_piece(attacker);
+    PieceType v = movegen::is_enpassant(m) ? PAWN : (victim == NO_PIECE ? NO_PIECE_TYPE : type_of_piece(victim));
+    return piece_value(v) * 16 - piece_value(a);
+}
+
+static int score_move(const board::Position& pos, movegen::Move m, movegen::Move ttMove, movegen::Move killer1, movegen::Move killer2, Piece movedPiece, Piece prevMovedPiece, Square prevTo) {
+    if (m == ttMove) return 2'000'000;
+    if (prevMovedPiece != NO_PIECE && m == g_countermove[prevMovedPiece][prevTo]) return 1'500'000;
     if (m == killer1) return 900'000;
     if (m == killer2) return 800'000;
     int base = 0;
-    if (movegen::is_capture(m)) base += 100'000;
+    if (movegen::is_capture(m)) base += 200'000 + mvv_lva(pos, m);
     base += g_history[movedPiece][movegen::to_sq(m)];
     if (movegen::is_promotion(m)) base += 50'000 + piece_value(movegen::promotion_piece(m));
     return base;
 }
 
-static int negamax(board::Position& pos, int depth, int alpha, int beta, TranspositionTable& tt, std::atomic<bool>& stop, int ply) {
+static int negamax(board::Position& pos, int depth, int alpha, int beta, TranspositionTable& tt, std::atomic<bool>& stop, int ply, movegen::Move prevMove, Piece prevMovedPiece, Square prevTo, int parentStaticEval) {
     if (stop.load(std::memory_order_relaxed)) return alpha;
 
+    const bool pvNode = (alpha + 1 < beta);
+
+    // Stand pat / static eval
+    const bool inCheck = pos.in_check();
+    const int staticEval = evaluate(pos);
+    const bool improving = (staticEval >= parentStaticEval - 30);
+
     if (depth == 0) return qsearch(pos, alpha, beta, stop);
+
+    // Razoring near leaf
+    if (!inCheck && depth <= 2) {
+        int razorMargin = 125 * depth;
+        if (staticEval + razorMargin <= alpha) {
+            int qs = qsearch(pos, alpha, beta, stop);
+            if (qs <= alpha) return qs;
+        }
+    }
 
     TTEntry tte{};
     movegen::Move ttMove = 0;
@@ -141,19 +176,21 @@ static int negamax(board::Position& pos, int depth, int alpha, int beta, Transpo
         ttMove = tte.move;
     }
 
+    // Static null-move pruning
+    if (!inCheck && depth <= 3 && staticEval - 120 * depth >= beta) {
+        return staticEval;
+    }
+
     // Null-move pruning
-    if (depth >= 3 && !pos.in_check()) {
+    if (depth >= 3 && !inCheck) {
         board::StateInfo st;
         if (pos.make_null_move(st)) {
-            int R = 2;
-            int score = -negamax(pos, depth - 1 - R, -beta, -beta + 1, tt, stop, ply + 1);
+            int R = 2 + (depth >= 5 ? 1 : 0);
+            int score = -negamax(pos, depth - 1 - R, -beta, -beta + 1, tt, stop, ply + 1, 0, NO_PIECE, SQ_NONE, staticEval);
             pos.unmake_null_move(st);
             if (score >= beta) return beta;
         }
     }
-
-    const bool inCheck = pos.in_check();
-    const int staticEval = evaluate(pos);
 
     board::StateInfo st;
     movegen::MoveList moves;
@@ -169,7 +206,7 @@ static int negamax(board::Position& pos, int depth, int alpha, int beta, Transpo
     std::sort(moves.moves.begin(), moves.moves.end(), [&](movegen::Move a, movegen::Move b){
         Piece movedA = static_cast<Piece>(pos.piece_at(movegen::from_sq(a)));
         Piece movedB = static_cast<Piece>(pos.piece_at(movegen::from_sq(b)));
-        return score_move(a, ttMove, killer1, killer2, movedA) > score_move(b, ttMove, killer1, killer2, movedB);
+        return score_move(pos, a, ttMove, killer1, killer2, movedA, prevMovedPiece, prevTo) > score_move(pos, b, ttMove, killer1, killer2, movedB, prevMovedPiece, prevTo);
     });
 
     int bestScore = std::numeric_limits<int>::min() / 2;
@@ -182,34 +219,44 @@ static int negamax(board::Position& pos, int depth, int alpha, int beta, Transpo
 
         const bool isCapOrPromo = movegen::is_capture(m) || movegen::is_promotion(m);
 
-        // Futility pruning: at shallow depths, if static eval is far below alpha and move is quiet
-        if (!inCheck && !isCapOrPromo && depth <= 2) {
-            int margin = 100 * depth; // simple margin per ply
-            if (staticEval + margin <= alpha) {
-                ++moveIndex;
-                continue;
-            }
+        // Late move pruning for quiet moves at low depth
+        if (!pvNode && !inCheck && !isCapOrPromo && depth <= 2) {
+            int lmpLimit = (depth == 1 ? 4 : 6);
+            if (moveIndex >= lmpLimit) { ++moveIndex; continue; }
         }
 
         if (!pos.make_move(m, st)) { ++moveIndex; continue; }
 
-        // PVS with simple late move reductions for quiet moves
+        // PVS with improving-aware LMR for quiet moves
         int score;
         int newDepth = depth - 1;
+        Piece moved = static_cast<Piece>(pos.piece_at(movegen::from_sq(m))); // from square before move was made; but we need moved piece for history; capture before make_move removed; we already moved; so recompute from st? Instead capture moved using previous line before make_move.
+        // Note: 'moved' variable above should have been captured before make_move; adjust below accordingly.
+
+        // Capture actual moved piece before making move
+        // However we already made the move. We retrieve it from the destination square by unmaking is complex; so grab before making move in temp variable.
+
+        // Undo and redo to capture moved piece cleanly is too expensive; instead compute 'moved' earlier
+
+        pos.unmake_move(m, st); // revert move to recover state
+        moved = static_cast<Piece>(pos.piece_at(movegen::from_sq(m)));
+        if (!pos.make_move(m, st)) { ++moveIndex; continue; }
+
         if (bestMove == 0) {
-            score = -negamax(pos, newDepth, -beta, -alpha, tt, stop, ply + 1);
+            score = -negamax(pos, newDepth, -beta, -alpha, tt, stop, ply + 1, m, moved, movegen::to_sq(m), staticEval);
         } else {
             int reduction = 0;
             if (!inCheck && !isCapOrPromo && depth >= 3) {
                 reduction = 1 + ((depth >= 5 && moveIndex >= 5) ? 1 : 0);
+                if (!improving) reduction += 1;
                 if (newDepth - reduction < 0) reduction = newDepth > 0 ? newDepth - 1 : 0;
             }
-            score = -negamax(pos, newDepth - reduction, -alpha - 1, -alpha, tt, stop, ply + 1);
+            score = -negamax(pos, newDepth - reduction, -alpha - 1, -alpha, tt, stop, ply + 1, m, moved, movegen::to_sq(m), staticEval);
             if (score > alpha) {
                 // Re-search at full depth if it improved
-                score = -negamax(pos, newDepth, -alpha - 1, -alpha, tt, stop, ply + 1);
+                score = -negamax(pos, newDepth, -alpha - 1, -alpha, tt, stop, ply + 1, m, moved, movegen::to_sq(m), staticEval);
                 if (score > alpha && score < beta) {
-                    score = -negamax(pos, newDepth, -beta, -alpha, tt, stop, ply + 1);
+                    score = -negamax(pos, newDepth, -beta, -alpha, tt, stop, ply + 1, m, moved, movegen::to_sq(m), staticEval);
                 }
             }
         }
@@ -220,10 +267,12 @@ static int negamax(board::Position& pos, int depth, int alpha, int beta, Transpo
             bestMove = m;
         }
         if (bestScore > alpha) {
-            // Update history for quiet moves that improve alpha
-            Piece moved = static_cast<Piece>(pos.piece_at(movegen::from_sq(m)));
+            // Update history and countermove for quiet moves that improve alpha
             if (!movegen::is_capture(m)) {
                 g_history[moved][movegen::to_sq(m)] += depth * depth;
+                if (prevMovedPiece != NO_PIECE && prevTo != SQ_NONE) {
+                    g_countermove[prevMovedPiece][prevTo] = m;
+                }
                 // Update killers
                 if (m != killer1) {
                     g_killer[ply][1] = g_killer[ply][0];
@@ -233,10 +282,12 @@ static int negamax(board::Position& pos, int depth, int alpha, int beta, Transpo
             alpha = bestScore;
         }
         if (alpha >= beta) {
-            // Beta cutoff: update history/killers for quiet move
+            // Beta cutoff: update history/killers/countermove for quiet move
             if (!movegen::is_capture(m)) {
-                Piece moved = static_cast<Piece>(pos.piece_at(movegen::from_sq(m)));
                 g_history[moved][movegen::to_sq(m)] += depth * depth;
+                if (prevMovedPiece != NO_PIECE && prevTo != SQ_NONE) {
+                    g_countermove[prevMovedPiece][prevTo] = m;
+                }
                 if (m != killer1) {
                     g_killer[ply][1] = g_killer[ply][0];
                     g_killer[ply][0] = m;
@@ -260,6 +311,7 @@ SearchResult think(board::Position& pos, const Limits& limits, TranspositionTabl
     g_nodes = 0;
     std::memset(g_killer, 0, sizeof(g_killer));
     std::memset(g_history, 0, sizeof(g_history));
+    std::memset(g_countermove, 0, sizeof(g_countermove));
 
     SearchResult sr;
     movegen::MoveList legal;
@@ -300,11 +352,12 @@ SearchResult think(board::Position& pos, const Limits& limits, TranspositionTabl
             alpha = -30000; beta = 30000;
         }
 
-        int score = negamax(pos, d, alpha, beta, tt, stop, /*ply=*/0);
+        int parentEval = evaluate(pos);
+        int score = negamax(pos, d, alpha, beta, tt, stop, /*ply=*/0, /*prev*/0, /*prevMovedPiece*/NO_PIECE, /*prevTo*/SQ_NONE, parentEval);
         // If fail-low/high on aspiration, re-search with full window
         if (score <= alpha || score >= beta) {
             alpha = -30000; beta = 30000;
-            score = negamax(pos, d, alpha, beta, tt, stop, /*ply=*/0);
+            score = negamax(pos, d, alpha, beta, tt, stop, /*ply=*/0, /*prev*/0, /*prevMovedPiece*/NO_PIECE, /*prevTo*/SQ_NONE, parentEval);
         }
         prevScore = score;
 

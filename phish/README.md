@@ -9,8 +9,8 @@ Status: Experimental. Interfaces and internals will change. Strength is not tune
 - Bitboards with precomputed attacks for king/knight/pawns; simple sliding attacks
 - Legal move generation and FEN parsing
 - Zobrist hashing and exact make/unmake (incl. EP, castling, promotion)
-- UCI protocol: position/go/perft/setoption, async search with proper stop handling and periodic info lines
-- Search skeleton: iterative deepening, PVS, TT, null-move pruning, killers/history heuristics, basic capture-only quiescence
+- UCI protocol: position/go/perft/setoption
+- Search skeleton: iterative deepening, PVS, TT, null-move pruning, simple material eval
 - Perft tool and basic test list (startpos depths 1–3)
 
 ## Requirements
@@ -42,10 +42,8 @@ go depth 6
 Example with a short line:
 ```
 position startpos moves e2e4 e7e5 g1f3 b8c6
-go wtime 30000 btime 30000 winc 0 binc 0
+go depth 5
 ```
-
-Phish supports: `go depth N`, `go movetime T`, `go wtime/btime[/winc/binc]`, `go nodes N`, and `go infinite` with `stop`.
 
 Supported UCI options (subset):
 - Hash (MB)
@@ -68,15 +66,6 @@ Edit `tests/perft/perft_positions.txt` to add more FENs and depths:
 ```
 <fen or startpos>;<depth>;<expected_nodes>
 ```
-
-## Android / DroidFish
-- Build a position-independent Release binary for ARM64:
-```
-cmake -S /workspace/phish -B /workspace/phish/build-android -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DPHISH_ENABLE_LTO=OFF
-cmake --build /workspace/phish/build-android -j
-```
-- Alternatively, use Android NDK toolchain (aarch64): set `CMAKE_TOOLCHAIN_FILE` to the NDK toolchain and `-DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-21`.
-- Copy the resulting `phish` binary into DroidFish's UCI engine folder on your device. Phish prints periodic `info` lines and supports `stop`, compatible with DroidFish.
 
 ## Project layout
 ```

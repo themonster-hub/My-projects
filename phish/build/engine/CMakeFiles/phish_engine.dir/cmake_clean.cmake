@@ -1,4 +1,8 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o"
+  "CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o.d"
+  "CMakeFiles/phish_engine.dir/board/position.cpp.o"
+  "CMakeFiles/phish_engine.dir/board/position.cpp.o.d"
   "CMakeFiles/phish_engine.dir/uci/uci.cpp.o"
   "CMakeFiles/phish_engine.dir/uci/uci.cpp.o.d"
   "CMakeFiles/phish_engine.dir/util/config.cpp.o"

@@ -1,2 +1,2 @@
-"/usr/bin/llvm-ar-20" qc libphish_engine.a CMakeFiles/phish_engine.dir/uci/uci.cpp.o CMakeFiles/phish_engine.dir/util/config.cpp.o
+"/usr/bin/llvm-ar-20" qc libphish_engine.a CMakeFiles/phish_engine.dir/uci/uci.cpp.o CMakeFiles/phish_engine.dir/util/config.cpp.o CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o CMakeFiles/phish_engine.dir/board/position.cpp.o
 "/usr/bin/llvm-ranlib-20" libphish_engine.a

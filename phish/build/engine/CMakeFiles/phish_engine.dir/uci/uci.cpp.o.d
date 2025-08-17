@@ -292,4 +292,8 @@ engine/CMakeFiles/phish_engine.dir/uci/uci.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/this_thread_sleep.h \
   /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/semaphore.h \
   /usr/include/x86_64-linux-gnu/bits/semaphore.h \
-  /workspace/phish/engine/../engine/util/config.h
+  /workspace/phish/engine/../engine/util/config.h \
+  /workspace/phish/engine/../engine/bitboard/bitboard.h \
+  /workspace/phish/engine/../engine/util/types.h \
+  /workspace/phish/engine/../engine/board/position.h \
+  /workspace/phish/engine/../engine/movegen/move.h

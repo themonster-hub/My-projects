@@ -12,6 +12,9 @@
 #include <vector>
 
 #include "engine/util/config.h"
+#include "engine/bitboard/bitboard.h"
+#include "engine/board/position.h"
+#include "engine/movegen/move.h"
 
 namespace phish::uci {
 
@@ -50,12 +53,10 @@ void send_options() {
 }
 
 struct PositionState {
-    std::string fen;
-    std::vector<std::string> moves;
+    board::Position pos;
 };
 
 void handle_setoption(const std::string& line) {
-    // UCI: setoption name <name> [value <value...>]
     const auto name_pos = line.find("name ");
     if (name_pos == std::string::npos) return;
     const auto value_pos = line.find(" value ", name_pos);
@@ -70,7 +71,6 @@ void handle_setoption(const std::string& line) {
         value = line.substr(value_pos + 7);
     }
 
-    // Trim spaces
     auto trim = [](std::string& s) {
         const auto is_space = [](unsigned char ch) { return std::isspace(ch) != 0; };
         while (!s.empty() && is_space(static_cast<unsigned char>(s.front()))) s.erase(s.begin());
@@ -82,14 +82,14 @@ void handle_setoption(const std::string& line) {
     set_option(name, value);
 }
 
-void handle_position(const std::vector<std::string>& tokens, PositionState& pos) {
-    // position [fen <fenstring> | startpos ]  moves <move1> ....
-    pos = PositionState{};
-    if (tokens.size() < 2) return;
+void handle_position(const std::vector<std::string>& tokens, PositionState& st) {
+    st.pos = board::Position();
 
+    if (tokens.size() < 2) return;
     std::size_t idx = 1;
+
     if (tokens[idx] == "startpos") {
-        pos.fen = "startpos";
+        st.pos.set_fen("startpos");
         ++idx;
     } else if (tokens[idx] == "fen") {
         ++idx;
@@ -100,29 +100,36 @@ void handle_position(const std::vector<std::string>& tokens, PositionState& pos)
             if (fen_fields > 0) fen << ' ';
             fen << tokens[idx];
             ++fen_fields;
-            if (fen_fields >= 6) {
-                // Stop at standard 6-field FEN; extra fields (e.g., Shredder) are ignored here
-                break;
-            }
+            if (fen_fields >= 6) break;
         }
-        pos.fen = fen.str();
+        st.pos.set_fen(fen.str());
     }
 
     if (idx < tokens.size() && tokens[idx] == "moves") {
         ++idx;
-        for (; idx < tokens.size(); ++idx) pos.moves.push_back(tokens[idx]);
+        for (; idx < tokens.size(); ++idx) {
+            st.pos.play_uci_move(tokens[idx]);
+        }
     }
 }
 
-void handle_go(const std::vector<std::string>& /*tokens*/, const PositionState& /*pos*/) {
-    // Placeholder: No search yet. Respond with a null move.
+void handle_go(const std::vector<std::string>& /*tokens*/, const PositionState& /*st*/) {
     std::cout << "bestmove 0000" << '\n' << std::flush;
+}
+
+void handle_perft(const std::vector<std::string>& tokens, PositionState& st) {
+    int depth = 1;
+    if (tokens.size() >= 2) depth = std::atoi(tokens[1].c_str());
+    std::uint64_t nodes = st.pos.perft(depth);
+    std::cout << "info string perft " << depth << " nodes " << nodes << '\n';
 }
 
 } // namespace
 
 void run() {
-    PositionState position;
+    bitboard::init();
+    PositionState state;
+    state.pos.set_fen("startpos");
 
     std::string line;
     while (std::getline(std::cin, line)) {
@@ -141,24 +148,25 @@ void run() {
         } else if (cmd == "setoption") {
             handle_setoption(line);
         } else if (cmd == "ucinewgame") {
-            position = PositionState{};
+            state.pos.set_fen("startpos");
         } else if (cmd == "position") {
-            handle_position(tokens, position);
+            handle_position(tokens, state);
         } else if (cmd == "go") {
-            handle_go(tokens, position);
+            handle_go(tokens, state);
         } else if (cmd == "stop") {
             std::cout << "bestmove 0000" << '\n' << std::flush;
         } else if (cmd == "bench") {
             std::cout << "info string bench not implemented" << '\n';
             std::cout << "bestmove 0000" << '\n' << std::flush;
+        } else if (cmd == "perft") {
+            handle_perft(tokens, state);
         } else if (cmd == "quit") {
             break;
         } else if (cmd == "ponderhit") {
-            // Not implemented yet
         } else if (cmd == "eval" || cmd == "d") {
             std::cout << "info string debug print not implemented" << '\n' << std::flush;
         } else if (cmd == "help") {
-            std::cout << "info string commands: uci, isready, setoption, ucinewgame, position, go, stop, bench, quit" << '\n' << std::flush;
+            std::cout << "info string commands: uci, isready, setoption, ucinewgame, position, go, stop, perft, bench, quit" << '\n' << std::flush;
         }
     }
 }

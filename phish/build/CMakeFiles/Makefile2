@@ -112,7 +112,7 @@ CMakeFiles/phish.dir/all: engine/CMakeFiles/phish_engine.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/phish.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/phish/build/CMakeFiles 5
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/phish/build/CMakeFiles 7
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/phish.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/phish/build/CMakeFiles 0
 .PHONY : CMakeFiles/phish.dir/rule
@@ -139,12 +139,12 @@ CMakeFiles/phish.dir/clean:
 engine/CMakeFiles/phish_engine.dir/all:
 	$(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/depend
 	$(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/phish/build/CMakeFiles --progress-num=3,4,5 "Built target phish_engine"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/phish/build/CMakeFiles --progress-num=3,4,5,6,7 "Built target phish_engine"
 .PHONY : engine/CMakeFiles/phish_engine.dir/all
 
 # Build rule for subdir invocation for target.
 engine/CMakeFiles/phish_engine.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/phish/build/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/phish/build/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 engine/CMakeFiles/phish_engine.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/phish/build/CMakeFiles 0
 .PHONY : engine/CMakeFiles/phish_engine.dir/rule
@@ -156,7 +156,7 @@ phish_engine: engine/CMakeFiles/phish_engine.dir/rule
 # codegen rule for target.
 engine/CMakeFiles/phish_engine.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/phish/build/CMakeFiles --progress-num=3,4,5 "Finished codegen for target phish_engine"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/phish/build/CMakeFiles --progress-num=3,4,5,6,7 "Finished codegen for target phish_engine"
 .PHONY : engine/CMakeFiles/phish_engine.dir/codegen
 
 # clean rule for target.

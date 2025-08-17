@@ -175,6 +175,54 @@ phish_engine/fast:
 	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/build
 .PHONY : phish_engine/fast
 
+bitboard/bitboard.o: bitboard/bitboard.cpp.o
+.PHONY : bitboard/bitboard.o
+
+# target to build an object file
+bitboard/bitboard.cpp.o:
+	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.o
+.PHONY : bitboard/bitboard.cpp.o
+
+bitboard/bitboard.i: bitboard/bitboard.cpp.i
+.PHONY : bitboard/bitboard.i
+
+# target to preprocess a source file
+bitboard/bitboard.cpp.i:
+	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.i
+.PHONY : bitboard/bitboard.cpp.i
+
+bitboard/bitboard.s: bitboard/bitboard.cpp.s
+.PHONY : bitboard/bitboard.s
+
+# target to generate assembly for a file
+bitboard/bitboard.cpp.s:
+	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/bitboard/bitboard.cpp.s
+.PHONY : bitboard/bitboard.cpp.s
+
+board/position.o: board/position.cpp.o
+.PHONY : board/position.o
+
+# target to build an object file
+board/position.cpp.o:
+	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/board/position.cpp.o
+.PHONY : board/position.cpp.o
+
+board/position.i: board/position.cpp.i
+.PHONY : board/position.i
+
+# target to preprocess a source file
+board/position.cpp.i:
+	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/board/position.cpp.i
+.PHONY : board/position.cpp.i
+
+board/position.s: board/position.cpp.s
+.PHONY : board/position.s
+
+# target to generate assembly for a file
+board/position.cpp.s:
+	cd /workspace/phish/build && $(MAKE) $(MAKESILENT) -f engine/CMakeFiles/phish_engine.dir/build.make engine/CMakeFiles/phish_engine.dir/board/position.cpp.s
+.PHONY : board/position.cpp.s
+
 uci/uci.o: uci/uci.cpp.o
 .PHONY : uci/uci.o
 
@@ -236,6 +284,12 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... phish_engine"
+	@echo "... bitboard/bitboard.o"
+	@echo "... bitboard/bitboard.i"
+	@echo "... bitboard/bitboard.s"
+	@echo "... board/position.o"
+	@echo "... board/position.i"
+	@echo "... board/position.s"
 	@echo "... uci/uci.o"
 	@echo "... uci/uci.i"
 	@echo "... uci/uci.s"

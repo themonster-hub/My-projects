@@ -5,6 +5,9 @@ target_sources(phish_engine
   PRIVATE
     uci/uci.cpp
     util/config.cpp
+    util/types.h
+    bitboard/bitboard.cpp
+    board/position.cpp
 )
 
 # Public include so consumers can include with "engine/..."
